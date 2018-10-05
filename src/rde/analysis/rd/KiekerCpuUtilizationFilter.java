@@ -43,10 +43,15 @@ public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin imple
 			description = "Input for cpu utilization records.", 
 			eventTypes = { CPUUtilizationRecord.class })
 	public final void inputEvent(final CPUUtilizationRecord record) {
-		SortedMap<Long, Double> singleCpuUtilization = this.cpuUtilization.get(record.getCpuID());
+		if (record.getCpuID().equals("0") == false) {
+			return;
+		}
+		String cpuId = "_oro4gG3fEdy4YaaT-RYrLQ";
+		
+		SortedMap<Long, Double> singleCpuUtilization = this.cpuUtilization.get(cpuId);
 		if (singleCpuUtilization == null) {
 			singleCpuUtilization = new TreeMap<Long, Double>();
-			this.cpuUtilization.put(record.getCpuID(), singleCpuUtilization);
+			this.cpuUtilization.put(cpuId, singleCpuUtilization);
 		}
 		singleCpuUtilization.put(record.getTimestamp(), record.getTotalUtilization());
 	}

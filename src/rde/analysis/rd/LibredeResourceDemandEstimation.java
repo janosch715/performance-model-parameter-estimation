@@ -90,6 +90,8 @@ public class LibredeResourceDemandEstimation {
 		Map<String, IDataSource> dataSources = 
 				Collections.singletonMap(dataSourceConfig.getName(), dataSource);
 		LibredeResults results = Librede.execute(libredeConfig, dataSources);
+		
+		System.out.println();
 	}
 	
 	private InMemoryDataSource dataSource;
