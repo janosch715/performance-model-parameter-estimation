@@ -2,6 +2,7 @@ package rde.analysis.rd;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -13,17 +14,23 @@ import kieker.common.configuration.Configuration;
 import kieker.common.record.system.CPUUtilizationRecord;
 
 @Plugin(description = "A filter for cpu utilization records.")
-public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin {
+public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin implements ResourceUtilizationRepository {
 
-	private final Map<String, TreeMap<Long, Double>> cpuUtilization;
+	private final Map<String, SortedMap<Long, Double>> cpuUtilization;
 	
 	public KiekerCpuUtilizationFilter(Configuration configuration, IProjectContext projectContext) {
 		super(configuration, projectContext);
-		this.cpuUtilization = new HashMap<String, TreeMap<Long, Double>>();
+		this.cpuUtilization = new HashMap<String, SortedMap<Long, Double>>();
 	}
 	
-	public SortedMap<Long, Double> getUtilization(String cpuId) {
-		return this.cpuUtilization.get(cpuId);
+	@Override
+	public SortedMap<Long, Double> getUtilization(String resourceId) {
+		return this.cpuUtilization.get(resourceId);
+	}
+	
+	@Override
+	public Set<String> getResourceIds() {
+		return this.cpuUtilization.keySet();
 	}
 
 	/**
@@ -36,7 +43,7 @@ public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin {
 			description = "Input for cpu utilization records.", 
 			eventTypes = { CPUUtilizationRecord.class })
 	public final void inputEvent(final CPUUtilizationRecord record) {
-		TreeMap<Long, Double> singleCpuUtilization = this.cpuUtilization.get(record.getCpuID());
+		SortedMap<Long, Double> singleCpuUtilization = this.cpuUtilization.get(record.getCpuID());
 		if (singleCpuUtilization == null) {
 			singleCpuUtilization = new TreeMap<Long, Double>();
 			this.cpuUtilization.put(record.getCpuID(), singleCpuUtilization);

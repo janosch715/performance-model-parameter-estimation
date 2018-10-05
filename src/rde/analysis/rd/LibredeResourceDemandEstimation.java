@@ -1,30 +1,20 @@
 package rde.analysis.rd;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.palladiosimulator.pcm.repository.Repository;
-import org.palladiosimulator.pcm.resourcetype.ProcessingResourceType;
-
 import monitoring.records.ResponseTimeRecord;
 import rde.analysis.KiekerServiceCallRecordFilter;
-import rde.analysis.ServiceExecutionItem;
 import rde.analysis.ServiceParameters;
-import rde.analysis.branch.WekaBranchModelRepository;
-import rde.analysis.loop.WekaLoopModelRepository;
 import tools.descartes.librede.Librede;
 import tools.descartes.librede.LibredeResults;
 import tools.descartes.librede.approach.ServiceDemandLawApproach;
@@ -56,9 +46,6 @@ import tools.descartes.librede.units.Ratio;
 import tools.descartes.librede.units.Time;
 import tools.descartes.librede.units.UnitsFactory;
 import tools.descartes.librede.validation.ResponseTimeValidator;
-import weka.classifiers.functions.SMOreg;
-import weka.core.Attribute;
-import weka.core.Instances;
 
 public class LibredeResourceDemandEstimation {
 	
@@ -72,7 +59,7 @@ public class LibredeResourceDemandEstimation {
 
 	private static final String DATA_SOURCE_NAME = "InMemoryDataSource";
 	
-	private final Map<String, SortedMap<Long, Double>> resourceUtilization;
+	private final ResourceUtilizationRepository resourceUtilization;
 	
 	private final KiekerResponseTimeFilter responseTimeRepository;
 	
@@ -83,7 +70,7 @@ public class LibredeResourceDemandEstimation {
 	private final Map<String, Resource> idToResource;
 
 	public LibredeResourceDemandEstimation( 
-			Map<String, SortedMap<Long, Double>> resourceUtilization,
+			ResourceUtilizationRepository resourceUtilization,
 			KiekerResponseTimeFilter responseTimeRepository,
 			KiekerServiceCallRecordFilter serviceCallRepository) {
 		this.resourceUtilization = resourceUtilization;
@@ -139,8 +126,8 @@ public class LibredeResourceDemandEstimation {
 	}
 	
 	private void addAllResourcesUtilization() {
-		for (Entry<String, SortedMap<Long, Double>> resourceUtilization : this.resourceUtilization.entrySet()) {
-			this.addResourceUtilization(resourceUtilization.getKey(), resourceUtilization.getValue());
+		for (String resourceId : this.resourceUtilization.getResourceIds()) {
+			this.addResourceUtilization(resourceId, this.resourceUtilization.getUtilization(resourceId));
 		}
 	}
 	

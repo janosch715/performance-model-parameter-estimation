@@ -24,7 +24,7 @@ public class LoopIterationEstimation {
 		this.loopIterationRepository = loopIterationRepository;
 	}
 
-	public Map<String, WekaLoopModel> estimateAll() throws Exception {
+	public Map<String, WekaLoopModel> estimateAll() {
 		HashMap<String, WekaLoopModel> returnValue = new HashMap<String, WekaLoopModel>();
 		for (String loopId : this.loopIterationRepository.getLoopIds()) {
 			returnValue.put(loopId, this.estimate(loopId));
@@ -32,7 +32,15 @@ public class LoopIterationEstimation {
 		return returnValue;
 	}
 
-	public WekaLoopModel estimate(String loopId) throws Exception {
+	public WekaLoopModel estimate(String loopId) {
+		try {
+			return this.internEstimate(loopId);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private WekaLoopModel internEstimate(String loopId) throws Exception {
 		List<LoopRecord> records = this.loopIterationRepository.getLoopRecords(loopId);
 
 		if (records.size() == 0) {

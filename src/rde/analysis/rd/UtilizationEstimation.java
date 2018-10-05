@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
@@ -28,7 +29,7 @@ import rde.analysis.ServiceParameters;
 import rde.analysis.branch.WekaBranchModelRepository;
 import rde.analysis.loop.WekaLoopModelRepository;
 
-public class UtilizationEstimation {
+public class UtilizationEstimation implements ResourceUtilizationRepository {
 
 	private static class ServiceCallRdEstimation {
 		private final Map<ProcessingResourceType, Double> resourceDemands;
@@ -81,6 +82,47 @@ public class UtilizationEstimation {
 				.collect(Collectors.toMap(seff -> seff.getDescribedService__SEFF().getId(), seff -> seff));
 
 		this.estimate();
+	}
+	
+	@Override
+	public SortedMap<Long, Double> getUtilization(String resourceId) {
+
+	}
+
+	@Override
+	public Set<String> getResourceIds() {
+	
+	}
+	
+	public void estimateMonitoredActionUtilization(
+			String resourceId, 
+			SortedMap<Long, Double> resourceUtilization) {
+		
+		SortedMap<Long, Double> monitoredActionsUtilization =
+				new TreeMap<Long, Double>();
+		
+		Entry<Long, Double> lastUtilizationRecord = null;
+		for (Entry<Long, Double> utilizationRecord : resourceUtilization.entrySet()) {
+			if (lastUtilizationRecord != null) {
+				Map<ProcessingResourceType, Double> currentNotMonitoredUtilization = 
+						this.estimate(lastUtilizationRecord.getKey(), utilizationRecord.getKey());
+				
+				Optional<Entry<ProcessingResourceType, Double>> currentNotMonitoredUtilizationOfResourceEntry = 
+					currentNotMonitoredUtilization.entrySet().stream()
+						.filter(d -> d.getKey().getId().equals(resourceId))
+						.findFirst();
+				
+				Double currentNotMonitoredUtilizationOfResource = 
+						currentNotMonitoredUtilizationOfResourceEntry.get().getValue();
+				
+				Double currentMonitoredActionUtilization = 
+						utilizationRecord.getValue() - currentNotMonitoredUtilizationOfResource;
+				
+				currentMonitoredActionUtilization = Math.max(currentMonitoredActionUtilization, 0.0);
+				monitoredActionsUtilization.put(utilizationRecord.getKey(), currentMonitoredActionUtilization);
+			}
+			lastUtilizationRecord = utilizationRecord;
+		}
 	}
 
 	public Map<ProcessingResourceType, Double> estimate(long fromInclusive, long toExclusive) {

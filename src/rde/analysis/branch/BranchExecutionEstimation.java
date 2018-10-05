@@ -38,7 +38,7 @@ public class BranchExecutionEstimation {
 		this.random = random;
 	}
 
-	public Map<String, WekaBranchModel> estimateAll() throws Exception {
+	public Map<String, WekaBranchModel> estimateAll() {
 		Map<String, WekaBranchModel> returnValue = new HashMap<String, WekaBranchModel>(); 
 		for (String branchId : this.branchExecutionRepository.getBranchIds()) {
 			returnValue.put(branchId, this.estimate(branchId));
@@ -46,7 +46,15 @@ public class BranchExecutionEstimation {
 		return returnValue;
 	}
 
-	public WekaBranchModel estimate(String branchId) throws Exception {
+	public WekaBranchModel estimate(String branchId) {
+		try {
+			return this.internEstimate(branchId);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private WekaBranchModel internEstimate(String branchId) throws Exception {
 		List<BranchRecord> records = this.branchExecutionRepository.getBranchRecords(branchId);
 
 		if (records.size() == 0) {
