@@ -1,6 +1,0 @@
-$0=kieker.common.record.misc.KiekerMetadataRecord
-$1=monitoring.records.ResponseTimeRecord
-$2=monitoring.records.LoopRecord
-$3=monitoring.records.ServiceCallRecord
-$4=monitoring.records.BranchRecord
-$5=kieker.common.record.system.CPUUtilizationRecord

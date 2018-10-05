@@ -2,6 +2,7 @@ package rde.analysis.rd;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,26 +34,34 @@ public final class KiekerResponseTimeFilter extends AbstractFilterPlugin {
 		}
 	}
 	
-	private final Map<String, ArrayList<ResponseTimeItem>> resourceDemandIdToResponseTimeRecord;
+	private final Map<String, Map<String, ArrayList<ResponseTimeRecord>>> internalActionIdAndReosurceIdToResponseTimeRecord;
 	
-	public Set<String> getResourceDemandIds() {
-		return this.resourceDemandIdToResponseTimeRecord.keySet();
+	public Set<String> getInternalActionIds() {
+		return this.internalActionIdAndReosurceIdToResponseTimeRecord.keySet();
 	}
 	
-	private Double earliestEntry = Double.POSITIVE_INFINITY;
-	private Double latestEntry = Double.NEGATIVE_INFINITY;
+	public Set<String> getResourceIds(String internalActionId) {
+		return this.internalActionIdAndReosurceIdToResponseTimeRecord.get(internalActionId).keySet();
+	}
+	
+	public List<ResponseTimeRecord> getResponseTimes(String internalActionId, String resourceId) {
+		return this.internalActionIdAndReosurceIdToResponseTimeRecord.get(internalActionId).get(resourceId);
+	}
+	
+	private Long earliestEntry = Long.MAX_VALUE;
+	private Long latestEntry = Long.MIN_VALUE;
 
 	public KiekerResponseTimeFilter(Configuration configuration, IProjectContext projectContext) {
 		super(configuration, projectContext);
-		this.resourceDemandIdToResponseTimeRecord = 
-				new HashMap<String, ArrayList<ResponseTimeItem>>();
+		this.internalActionIdAndReosurceIdToResponseTimeRecord = 
+				new HashMap<String, Map<String,ArrayList<ResponseTimeRecord>>>();
 	}
 	
-	public Double getLatestEntry() {
+	public Long getLatestEntry() {
 		return this.latestEntry;
 	}
 	
-	public Double getEarliestEntry() {
+	public Long getEarliestEntry() {
 		return this.earliestEntry;
 	}
 
@@ -66,17 +75,25 @@ public final class KiekerResponseTimeFilter extends AbstractFilterPlugin {
 			description = "Input for response time records.", 
 			eventTypes = { ResponseTimeRecord.class })
 	public final void inputEvent(final ResponseTimeRecord record) {
-		String resourceDemandId = record.getResourceDemandId();
-		ArrayList<ResponseTimeItem> responseTimeRecords = this.resourceDemandIdToResponseTimeRecord.get(resourceDemandId);
-		if (responseTimeRecords == null) {
-			responseTimeRecords = new ArrayList<ResponseTimeItem>();
-			this.resourceDemandIdToResponseTimeRecord.put(resourceDemandId, responseTimeRecords);
+		String internalActionId = record.getInternalActionId();
+		Map<String, ArrayList<ResponseTimeRecord>> resourceToResponseTimeRecord = 
+				this.internalActionIdAndReosurceIdToResponseTimeRecord.get(internalActionId);
+		if (resourceToResponseTimeRecord == null) {
+			resourceToResponseTimeRecord = new HashMap<String, ArrayList<ResponseTimeRecord>>();
+			this.internalActionIdAndReosurceIdToResponseTimeRecord.put(internalActionId, resourceToResponseTimeRecord);
 		}
-		ResponseTimeItem item = new ResponseTimeItem(record);
-		responseTimeRecords.add(item);
 		
-		this.earliestEntry = Math.min(this.earliestEntry, item.getStartTime());
-		this.latestEntry = Math.max(this.latestEntry, item.getStartTime());
+		String resourceId = record.getResourceId();
+		ArrayList<ResponseTimeRecord> responseTimeRecords = 
+				resourceToResponseTimeRecord.get(resourceId);
+		if (responseTimeRecords == null) {
+			responseTimeRecords = new ArrayList<ResponseTimeRecord>();
+			resourceToResponseTimeRecord.put(resourceId, responseTimeRecords);
+		}
+		responseTimeRecords.add(record);
+		
+		this.earliestEntry = Math.min(this.earliestEntry, record.getStartTime());
+		this.latestEntry = Math.max(this.latestEntry, record.getStartTime());
 	}
 
 	@Override

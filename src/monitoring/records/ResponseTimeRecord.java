@@ -20,14 +20,16 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 	/** Descriptive definition of the serialization size of the record. */
 	public static final int SIZE = TYPE_SIZE_STRING // ResponseTimeRecord.sessionId
 			 + TYPE_SIZE_STRING // ResponseTimeRecord.serviceExecutionId
-			 + TYPE_SIZE_STRING // ResponseTimeRecord.resourceDemandId
+			 + TYPE_SIZE_STRING // ResponseTimeRecord.internalActionId
+			 + TYPE_SIZE_STRING // ResponseTimeRecord.resourceId
 			 + TYPE_SIZE_LONG // ResponseTimeRecord.startTime
 			 + TYPE_SIZE_LONG; // ResponseTimeRecord.stopTime
 	
 	public static final Class<?>[] TYPES = {
 		String.class, // ResponseTimeRecord.sessionId
 		String.class, // ResponseTimeRecord.serviceExecutionId
-		String.class, // ResponseTimeRecord.resourceDemandId
+		String.class, // ResponseTimeRecord.internalActionId
+		String.class, // ResponseTimeRecord.resourceId
 		long.class, // ResponseTimeRecord.startTime
 		long.class, // ResponseTimeRecord.stopTime
 	};
@@ -35,14 +37,16 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 	/** default constants. */
 	public static final String SESSION_ID = "<not set>";
 	public static final String SERVICE_EXECUTION_ID = "<not set>";
-	public static final String RESOURCE_DEMAND_ID = "<not set>";
-	private static final long serialVersionUID = -5639455367684007842L;
+	public static final String INTERNAL_ACTION_ID = "<not set>";
+	public static final String RESOURCE_ID = "<not set>";
+	private static final long serialVersionUID = -4543911373814091808L;
 	
 	/** property name array. */
 	private static final String[] PROPERTY_NAMES = {
 		"sessionId",
 		"serviceExecutionId",
-		"resourceDemandId",
+		"internalActionId",
+		"resourceId",
 		"startTime",
 		"stopTime",
 	};
@@ -50,7 +54,8 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 	/** property declarations. */
 	private final String sessionId;
 	private final String serviceExecutionId;
-	private final String resourceDemandId;
+	private final String internalActionId;
+	private final String resourceId;
 	private final long startTime;
 	private final long stopTime;
 	
@@ -61,17 +66,20 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 	 *            sessionId
 	 * @param serviceExecutionId
 	 *            serviceExecutionId
-	 * @param resourceDemandId
-	 *            resourceDemandId
+	 * @param internalActionId
+	 *            internalActionId
+	 * @param resourceId
+	 *            resourceId
 	 * @param startTime
 	 *            startTime
 	 * @param stopTime
 	 *            stopTime
 	 */
-	public ResponseTimeRecord(final String sessionId, final String serviceExecutionId, final String resourceDemandId, final long startTime, final long stopTime) {
+	public ResponseTimeRecord(final String sessionId, final String serviceExecutionId, final String internalActionId, final String resourceId, final long startTime, final long stopTime) {
 		this.sessionId = sessionId == null?SESSION_ID:sessionId;
 		this.serviceExecutionId = serviceExecutionId == null?SERVICE_EXECUTION_ID:serviceExecutionId;
-		this.resourceDemandId = resourceDemandId == null?RESOURCE_DEMAND_ID:resourceDemandId;
+		this.internalActionId = internalActionId == null?INTERNAL_ACTION_ID:internalActionId;
+		this.resourceId = resourceId == null?RESOURCE_ID:resourceId;
 		this.startTime = startTime;
 		this.stopTime = stopTime;
 	}
@@ -90,9 +98,10 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 		AbstractMonitoringRecord.checkArray(values, TYPES);
 		this.sessionId = (String) values[0];
 		this.serviceExecutionId = (String) values[1];
-		this.resourceDemandId = (String) values[2];
-		this.startTime = (Long) values[3];
-		this.stopTime = (Long) values[4];
+		this.internalActionId = (String) values[2];
+		this.resourceId = (String) values[3];
+		this.startTime = (Long) values[4];
+		this.stopTime = (Long) values[5];
 	}
 
 	/**
@@ -110,9 +119,10 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 		AbstractMonitoringRecord.checkArray(values, valueTypes);
 		this.sessionId = (String) values[0];
 		this.serviceExecutionId = (String) values[1];
-		this.resourceDemandId = (String) values[2];
-		this.startTime = (Long) values[3];
-		this.stopTime = (Long) values[4];
+		this.internalActionId = (String) values[2];
+		this.resourceId = (String) values[3];
+		this.startTime = (Long) values[4];
+		this.stopTime = (Long) values[5];
 	}
 
 	
@@ -125,7 +135,8 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 	public ResponseTimeRecord(final IValueDeserializer deserializer) throws RecordInstantiationException {
 		this.sessionId = deserializer.getString();
 		this.serviceExecutionId = deserializer.getString();
-		this.resourceDemandId = deserializer.getString();
+		this.internalActionId = deserializer.getString();
+		this.resourceId = deserializer.getString();
 		this.startTime = deserializer.getLong();
 		this.stopTime = deserializer.getLong();
 	}
@@ -141,7 +152,8 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 		return new Object[] {
 			this.getSessionId(),
 			this.getServiceExecutionId(),
-			this.getResourceDemandId(),
+			this.getInternalActionId(),
+			this.getResourceId(),
 			this.getStartTime(),
 			this.getStopTime(),
 		};
@@ -153,7 +165,8 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 	public void registerStrings(final IRegistry<String> stringRegistry) {	// NOPMD (generated code)
 		stringRegistry.get(this.getSessionId());
 		stringRegistry.get(this.getServiceExecutionId());
-		stringRegistry.get(this.getResourceDemandId());
+		stringRegistry.get(this.getInternalActionId());
+		stringRegistry.get(this.getResourceId());
 	}
 	
 	/**
@@ -164,7 +177,8 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 		//super.serialize(serializer);
 		serializer.putString(this.getSessionId());
 		serializer.putString(this.getServiceExecutionId());
-		serializer.putString(this.getResourceDemandId());
+		serializer.putString(this.getInternalActionId());
+		serializer.putString(this.getResourceId());
 		serializer.putLong(this.getStartTime());
 		serializer.putLong(this.getStopTime());
 	}
@@ -229,7 +243,10 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 		if (!this.getServiceExecutionId().equals(castedRecord.getServiceExecutionId())) {
 			return false;
 		}
-		if (!this.getResourceDemandId().equals(castedRecord.getResourceDemandId())) {
+		if (!this.getInternalActionId().equals(castedRecord.getInternalActionId())) {
+			return false;
+		}
+		if (!this.getResourceId().equals(castedRecord.getResourceId())) {
 			return false;
 		}
 		if (this.getStartTime() != castedRecord.getStartTime()) {
@@ -252,8 +269,13 @@ public class ResponseTimeRecord extends AbstractMonitoringRecord implements IMon
 	}
 	
 	
-	public final String getResourceDemandId() {
-		return this.resourceDemandId;
+	public final String getInternalActionId() {
+		return this.internalActionId;
+	}
+	
+	
+	public final String getResourceId() {
+		return this.resourceId;
 	}
 	
 	

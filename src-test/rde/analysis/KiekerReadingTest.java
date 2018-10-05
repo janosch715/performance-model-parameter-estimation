@@ -119,7 +119,7 @@ public class KiekerReadingTest {
 		assertEquals(expectedBranchIds, branchIds);
 		
 		// Check resource demand ids
-		Set<String> resourceDemandIds = responseTimeFilter.getResourceDemandIds();
+		Set<String> resourceDemandIds = responseTimeFilter.getInternalActionIds();
 		
 		Set<String> expectedResourceDemandIds = new HashSet<String>();
 		expectedResourceDemandIds.add("A.methodA-internal-0");
