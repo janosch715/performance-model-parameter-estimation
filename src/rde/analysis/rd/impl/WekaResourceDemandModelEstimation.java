@@ -1,12 +1,10 @@
 package rde.analysis.rd.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
 
-import org.palladiosimulator.pcm.seff.seff_performance.ParametricResourceDemand;
-
+import rde.analysis.ServiceCall;
 import rde.analysis.ServiceParameters;
 import rde.analysis.util.WekaServiceParametersModel;
 import weka.classifiers.Classifier;
@@ -29,8 +27,8 @@ public class WekaResourceDemandModelEstimation {
 		}
 
 		@Override
-		public double estimate(ServiceParameters parameters) {
-			Instance parametersInstance = this.parametersConversion.buildInstance(parameters, 0);
+		public double estimate(ServiceCall serviceCall) {
+			Instance parametersInstance = this.parametersConversion.buildInstance(serviceCall.getParameters(), 0);
 			try {
 				return this.classifier.classifyInstance(parametersInstance);
 			} catch (Exception e) {

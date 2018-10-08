@@ -1,4 +1,4 @@
-package rde.analysis.branch;
+package rde.analysis.branch.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,25 +8,26 @@ import org.palladiosimulator.pcm.seff.AbstractBranchTransition;
 import org.palladiosimulator.pcm.seff.BranchAction;
 
 import rde.analysis.ServiceCall;
-import rde.analysis.ServiceParameters;
+import rde.analysis.branch.BranchEstimation;
 
-public class WekaBranchModelRepository {
-	private final Map<String, WekaBranchModel> modelCache;
+public class BranchEstimationImpl implements BranchEstimation {
+	private final Map<String, BranchModel> modelCache;
 	
-	public WekaBranchModelRepository() {
-		this.modelCache = new HashMap<String, WekaBranchModel>();
+	public BranchEstimationImpl() {
+		this.modelCache = new HashMap<String, BranchModel>();
 	}
 	
-	public void add(Map<String, WekaBranchModel> models) {
+	public void add(Map<String, BranchModel> models) {
 		this.modelCache.putAll(models);
 	}
 	
+	@Override
 	public AbstractBranchTransition estimateBranch(BranchAction branch, ServiceCall serviceCall) {
-		WekaBranchModel branchModel = this.modelCache.get(branch.getId());
+		BranchModel branchModel = this.modelCache.get(branch.getId());
 		if (branchModel == null) {
 			throw new IllegalArgumentException("An estimation for branch with id " + branch.getId() + " was not found.");
 		}
-		String estimatedBranchId = branchModel.estimateBranchId(serviceCall.getParameters());
+		String estimatedBranchId = branchModel.estimateBranchId(serviceCall);
 		
 		Optional<AbstractBranchTransition> estimatedBranch = branch.getBranches_Branch().stream()
 				.filter(transition -> transition.getId().equals(estimatedBranchId))

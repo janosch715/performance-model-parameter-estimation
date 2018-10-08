@@ -1,9 +1,5 @@
 package rde.analysis.rd;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -11,10 +7,7 @@ import org.apache.log4j.PatternLayout;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import rde.analysis.ServiceParameters;
 import rde.analysis.impl.KiekerMonitoringReader;
-import rde.analysis.loop.WekaLoopIterationEstimation;
-import rde.analysis.loop.WekaLoopModel;
 import rde.analysis.rd.impl.LibredeResourceDemandEstimation;
 
 public class LibredeResourceDemandEstimationTest {

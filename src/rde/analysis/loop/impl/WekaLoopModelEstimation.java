@@ -1,38 +1,44 @@
-package rde.analysis.loop;
+package rde.analysis.loop.impl;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import monitoring.records.LoopRecord;
+import rde.analysis.ServiceCall;
 import rde.analysis.ServiceCallDataSet;
+import rde.analysis.ServiceParameters;
 import rde.analysis.WekaDataSet;
+import rde.analysis.loop.LoopIDataSet;
+import rde.analysis.util.WekaServiceParametersModel;
+import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
 import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.Instances;
 
-public class WekaLoopIterationEstimation {
+public class WekaLoopModelEstimation {
 
 	private final ServiceCallDataSet serviceCallRepository;
 
-	private final KiekerLoopIterationFilter loopIterationRepository;
+	private final LoopIDataSet loopIterationRepository;
 
-	public WekaLoopIterationEstimation(ServiceCallDataSet serviceCallRepository,
-			KiekerLoopIterationFilter loopIterationRepository) {
+	public WekaLoopModelEstimation(ServiceCallDataSet serviceCallRepository,
+			LoopIDataSet loopIterationRepository) {
 		this.serviceCallRepository = serviceCallRepository;
 		this.loopIterationRepository = loopIterationRepository;
 	}
 
-	public Map<String, WekaLoopModel> estimateAll() {
-		HashMap<String, WekaLoopModel> returnValue = new HashMap<String, WekaLoopModel>();
+	public Map<String, LoopModel> estimateAll() {
+		HashMap<String, LoopModel> returnValue = new HashMap<String, LoopModel>();
 		for (String loopId : this.loopIterationRepository.getLoopIds()) {
 			returnValue.put(loopId, this.estimate(loopId));
 		}
 		return returnValue;
 	}
 
-	public WekaLoopModel estimate(String loopId) {
+	public LoopModel estimate(String loopId) {
 		try {
 			return this.internEstimate(loopId);
 		} catch (Exception e) {
@@ -76,5 +82,26 @@ public class WekaLoopIterationEstimation {
 		System.out.println(linReg);
 		
 		return new WekaLoopModel(linReg, dataSetBuilder.getParametersConversion());
+	}
+	
+	private static class WekaLoopModel implements LoopModel {
+		
+		private final Classifier classifier;
+		private final WekaServiceParametersModel parametersConversion;
+
+		public WekaLoopModel(Classifier classifier, WekaServiceParametersModel parametersConversion) {
+			this.classifier = classifier;
+			this.parametersConversion = parametersConversion;
+		}
+
+		@Override
+		public double estimateIterations(ServiceCall serviceCall) {
+			Instance parametersInstance = this.parametersConversion.buildInstance(serviceCall.getParameters(), 0);
+			try {
+				return this.classifier.classifyInstance(parametersInstance);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
 	}
 }

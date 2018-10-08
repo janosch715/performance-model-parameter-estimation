@@ -5,8 +5,10 @@ import kieker.analysis.IAnalysisController;
 import kieker.analysis.plugin.reader.filesystem.FSReader;
 import kieker.common.configuration.Configuration;
 import rde.analysis.ServiceCallDataSet;
-import rde.analysis.branch.KiekerBranchExecutionFilter;
-import rde.analysis.loop.KiekerLoopIterationFilter;
+import rde.analysis.branch.BranchDataSet;
+import rde.analysis.branch.impl.KiekerBranchFilter;
+import rde.analysis.loop.LoopIDataSet;
+import rde.analysis.loop.impl.KiekerLoopFilter;
 import rde.analysis.rd.ResponseTimeDataSet;
 import rde.analysis.rd.impl.KiekerCpuUtilizationFilter;
 import rde.analysis.rd.impl.KiekerResponseTimeFilter;
@@ -16,8 +18,8 @@ public class KiekerMonitoringReader {
 	private KiekerResponseTimeFilter responseTimeFilter;
 	private KiekerServiceCallRecordFilter callRecordFilter;
 	private KiekerCpuUtilizationFilter cpuFilter;
-	private KiekerLoopIterationFilter loopFilter;
-	private KiekerBranchExecutionFilter branchFilter;
+	private KiekerLoopFilter loopFilter;
+	private KiekerBranchFilter branchFilter;
 
 	public KiekerMonitoringReader(String kiekerRecordsDirectoryPath) {
 		this.read(kiekerRecordsDirectoryPath);
@@ -35,11 +37,11 @@ public class KiekerMonitoringReader {
 		return cpuFilter;
 	}
 
-	public KiekerLoopIterationFilter getLoopRepository() {
+	public LoopIDataSet getLoopRepository() {
 		return loopFilter;
 	}
 
-	public KiekerBranchExecutionFilter getBranchRepository() {
+	public BranchDataSet getBranchRepository() {
 		return branchFilter;
 	}
 
@@ -84,19 +86,19 @@ public class KiekerMonitoringReader {
 				KiekerCpuUtilizationFilter.INPUT_PORT_NAME_EVENTS);
 
 		// record filter
-		this.loopFilter = new KiekerLoopIterationFilter(new Configuration(), analysisInstance);
+		this.loopFilter = new KiekerLoopFilter(new Configuration(), analysisInstance);
 
 		// Connect the output of the reader with the input of the filter.
 		analysisInstance.connect(reader, FSReader.OUTPUT_PORT_NAME_RECORDS, loopFilter,
-				KiekerLoopIterationFilter.INPUT_PORT_NAME_EVENTS);
+				KiekerLoopFilter.INPUT_PORT_NAME_EVENTS);
 
 		// record filter
-		this.branchFilter = new KiekerBranchExecutionFilter(new Configuration(),
+		this.branchFilter = new KiekerBranchFilter(new Configuration(),
 				analysisInstance);
 
 		// Connect the output of the reader with the input of the filter.
 		analysisInstance.connect(reader, FSReader.OUTPUT_PORT_NAME_RECORDS, branchFilter,
-				KiekerBranchExecutionFilter.INPUT_PORT_NAME_EVENTS);
+				KiekerBranchFilter.INPUT_PORT_NAME_EVENTS);
 
 		// Start the analysis
 		analysisInstance.run();

@@ -1,4 +1,4 @@
-package rde.analysis.branch;
+package rde.analysis.branch.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,21 +12,30 @@ import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
 import monitoring.records.BranchRecord;
+import rde.analysis.branch.BranchDataSet;
 
 @Plugin(description = "A filter for loop iteration records.")
-public final class KiekerBranchExecutionFilter extends AbstractFilterPlugin {
+public final class KiekerBranchFilter extends AbstractFilterPlugin implements BranchDataSet {
 	
 	private final Map<String, List<BranchRecord>> branchIdToRecord;
 	
+	/* (non-Javadoc)
+	 * @see rde.analysis.branch.BranchDataSet#getBranchIds()
+	 */
+	@Override
 	public Set<String> getBranchIds() {
 		return this.branchIdToRecord.keySet();
 	}
 	
+	/* (non-Javadoc)
+	 * @see rde.analysis.branch.BranchDataSet#getBranchRecords(java.lang.String)
+	 */
+	@Override
 	public List<BranchRecord> getBranchRecords(String branchId) {
 		return this.branchIdToRecord.get(branchId);
 	}
 
-	public KiekerBranchExecutionFilter(Configuration configuration, IProjectContext projectContext) {
+	public KiekerBranchFilter(Configuration configuration, IProjectContext projectContext) {
 		super(configuration, projectContext);
 		this.branchIdToRecord = 
 				new HashMap<String, List<BranchRecord>>();

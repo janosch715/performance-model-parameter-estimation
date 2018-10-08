@@ -24,8 +24,8 @@ import org.palladiosimulator.pcm.seff.StopAction;
 import org.palladiosimulator.pcm.seff.seff_performance.ParametricResourceDemand;
 
 import rde.analysis.ServiceCallDataSet;
+import rde.analysis.branch.BranchEstimation;
 import rde.analysis.ServiceCall;
-import rde.analysis.branch.WekaBranchModelRepository;
 import rde.analysis.loop.LoopEstimation;
 import rde.analysis.rd.ResourceDemandEstimation;
 
@@ -53,7 +53,7 @@ public class UtilizationEstimation {
 
 	private final LoopEstimation loopEstimation;
 
-	private final WekaBranchModelRepository branchEstimation;
+	private final BranchEstimation branchEstimation;
 
 	private final ResourceDemandEstimation rdEstimation;
 
@@ -65,7 +65,7 @@ public class UtilizationEstimation {
 
 	public UtilizationEstimation(Set<String> ignoredInternalActionIds, Repository pcmRepository,
 			ServiceCallDataSet serviceCallRepository, LoopEstimation loopEstimation,
-			WekaBranchModelRepository branchEstimation, ResourceDemandEstimation rdEstimation) {
+			BranchEstimation branchEstimation, ResourceDemandEstimation rdEstimation) {
 
 		this.ignoredInternalActionIds = ignoredInternalActionIds;
 		this.pcmRepository = pcmRepository;

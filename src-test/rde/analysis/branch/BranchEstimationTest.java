@@ -12,9 +12,10 @@ import org.apache.log4j.PatternLayout;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import rde.analysis.ServiceCallMock;
 import rde.analysis.ServiceParameters;
-import rde.analysis.branch.BranchExecutionEstimation;
-import rde.analysis.branch.WekaBranchModel;
+import rde.analysis.branch.impl.BranchModel;
+import rde.analysis.branch.impl.WekaBranchModelEstimation;
 import rde.analysis.impl.KiekerMonitoringReader;
 
 public class BranchEstimationTest {
@@ -31,17 +32,18 @@ public class BranchEstimationTest {
 	@Test
 	public void estimateBranchTest() {
 		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
-		
+
 		Map<String, Object> testParametersA3 = new HashMap<String, Object>();
 		testParametersA3.put("a", 3);
 		ServiceParameters testServiceParametersA3 = ServiceParameters.build(testParametersA3);
-	
-		BranchExecutionEstimation branchEstimation = 
-				new BranchExecutionEstimation(reader.getCallRecordRepository(), reader.getBranchRepository(), new Random(0));
-		
-		Map<String, WekaBranchModel> branchResult = branchEstimation.estimateAll();
-		
-		String branchEstimationResult = branchResult.get("A.methodA-branch-0").estimateBranchId(testServiceParametersA3);
+
+		WekaBranchModelEstimation branchEstimation = new WekaBranchModelEstimation(reader.getCallRecordRepository(),
+				reader.getBranchRepository(), new Random(0));
+
+		Map<String, BranchModel> branchResult = branchEstimation.estimateAll();
+
+		String branchEstimationResult = branchResult.get("A.methodA-branch-0")
+				.estimateBranchId(new ServiceCallMock(testServiceParametersA3));
 		assertEquals("A.methodA-branch-0-0", branchEstimationResult);
 	}
 }

@@ -13,7 +13,6 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.omg.IOP.ServiceIdHelper;
 
 import monitoring.records.ResponseTimeRecord;
 import rde.analysis.ServiceCallDataSet;
@@ -23,7 +22,6 @@ import rde.analysis.rd.ResponseTimeDataSet;
 import tools.descartes.librede.ApproachResult;
 import tools.descartes.librede.Librede;
 import tools.descartes.librede.LibredeResults;
-import tools.descartes.librede.approach.IEstimationApproach;
 import tools.descartes.librede.approach.ServiceDemandLawApproach;
 import tools.descartes.librede.configuration.ConfigurationFactory;
 import tools.descartes.librede.configuration.ConfigurationPackage;

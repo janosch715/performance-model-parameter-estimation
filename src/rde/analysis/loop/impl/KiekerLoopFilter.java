@@ -1,4 +1,4 @@
-package rde.analysis.loop;
+package rde.analysis.loop.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,21 +12,24 @@ import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
 import monitoring.records.LoopRecord;
+import rde.analysis.loop.LoopIDataSet;
 
 @Plugin(description = "A filter for loop iteration records.")
-public final class KiekerLoopIterationFilter extends AbstractFilterPlugin {
+public final class KiekerLoopFilter extends AbstractFilterPlugin implements LoopIDataSet {
 	
 	private final Map<String, List<LoopRecord>> loopIdToRecord;
 	
+	@Override
 	public Set<String> getLoopIds() {
 		return this.loopIdToRecord.keySet();
 	}
 	
+	@Override
 	public List<LoopRecord> getLoopRecords(String loopId) {
 		return this.loopIdToRecord.get(loopId);
 	}
 
-	public KiekerLoopIterationFilter(Configuration configuration, IProjectContext projectContext) {
+	public KiekerLoopFilter(Configuration configuration, IProjectContext projectContext) {
 		super(configuration, projectContext);
 		this.loopIdToRecord = new HashMap<String, List<LoopRecord>>();
 	}

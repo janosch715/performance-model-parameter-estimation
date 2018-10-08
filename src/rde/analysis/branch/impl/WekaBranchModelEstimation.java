@@ -1,4 +1,4 @@
-package rde.analysis.branch;
+package rde.analysis.branch.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,45 +8,49 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import monitoring.records.BranchRecord;
+import rde.analysis.ServiceCall;
 import rde.analysis.ServiceCallDataSet;
 import rde.analysis.WekaDataSet;
+import rde.analysis.branch.BranchDataSet;
+import rde.analysis.util.WekaServiceParametersModel;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.Logistic;
 import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.Instances;
 
-public class BranchExecutionEstimation {
+public class WekaBranchModelEstimation {
 
 	private final ServiceCallDataSet serviceCallRepository;
 
-	private final KiekerBranchExecutionFilter branchExecutionRepository;
+	private final BranchDataSet branchExecutionRepository;
 	
 	private final Random random;
 
-	public BranchExecutionEstimation(
+	public WekaBranchModelEstimation(
 			ServiceCallDataSet serviceCallRepository,
-			KiekerBranchExecutionFilter branchExecutionRepository) {
+			BranchDataSet branchExecutionRepository) {
 		this(serviceCallRepository, branchExecutionRepository, new Random((long) Math.random()));
 	}
 	
-	public BranchExecutionEstimation(
+	public WekaBranchModelEstimation(
 			ServiceCallDataSet serviceCallRepository,
-			KiekerBranchExecutionFilter branchExecutionRepository,
+			BranchDataSet branchExecutionRepository,
 			Random random) {
 		this.serviceCallRepository = serviceCallRepository;
 		this.branchExecutionRepository = branchExecutionRepository;
 		this.random = random;
 	}
 
-	public Map<String, WekaBranchModel> estimateAll() {
-		Map<String, WekaBranchModel> returnValue = new HashMap<String, WekaBranchModel>(); 
+	public Map<String, BranchModel> estimateAll() {
+		Map<String, BranchModel> returnValue = new HashMap<String, BranchModel>(); 
 		for (String branchId : this.branchExecutionRepository.getBranchIds()) {
 			returnValue.put(branchId, this.estimate(branchId));
 		}
 		return returnValue;
 	}
 
-	public WekaBranchModel estimate(String branchId) {
+	public BranchModel estimate(String branchId) {
 		try {
 			return this.internEstimate(branchId);
 		} catch (Exception e) {
@@ -54,7 +58,7 @@ public class BranchExecutionEstimation {
 		}
 	}
 	
-	private WekaBranchModel internEstimate(String branchId) throws Exception {
+	private BranchModel internEstimate(String branchId) throws Exception {
 		List<BranchRecord> records = this.branchExecutionRepository.getBranchRecords(branchId);
 
 		if (records.size() == 0) {
@@ -110,5 +114,52 @@ public class BranchExecutionEstimation {
 		System.out.println(linReg);
 		
 		return new WekaBranchModel(linReg, dataSetBuilder.getParametersConversion(), this.random);
+	}
+	
+	private static class WekaBranchModel implements BranchModel {
+		
+		private final Logistic classifier;
+		private final WekaServiceParametersModel parametersModel;
+		private final Random random;
+
+		public WekaBranchModel(
+				Logistic classifier, 
+				WekaServiceParametersModel parametersConversion, 
+				Random random) {
+			this.classifier = classifier;
+			this.parametersModel = parametersConversion;
+			this.random = random;
+		}
+
+		/* (non-Javadoc)
+		 * @see rde.analysis.branch.BranchModel#estimateBranchId(rde.analysis.ServiceCall)
+		 */
+		@Override
+		public String estimateBranchId(ServiceCall serviceCall) {
+			Instance parametersInstance = this.parametersModel.buildInstance(serviceCall.getParameters(), 0);
+			Instances dataset = this.parametersModel.buildDataSet();
+			dataset.add(parametersInstance);
+			double[] branchDistribution;
+			try {
+				branchDistribution = this.classifier.distributionForInstance(dataset.firstInstance());
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			double selectedBranchPropability = this.random.nextDouble();
+			int selectedBranchIndex = 0;
+			double branchPropabilitySum = 0.0;
+			while (true) {
+				if (selectedBranchIndex >= branchDistribution.length) {
+					throw new IllegalArgumentException("The branch has propability distribution.");
+				}
+				branchPropabilitySum += branchDistribution[selectedBranchIndex];
+				if (selectedBranchPropability < branchPropabilitySum) {
+					break;
+				}
+				selectedBranchIndex++;
+			}
+			
+			return this.parametersModel.getClassAttribute().value(selectedBranchIndex);
+		}
 	}
 }

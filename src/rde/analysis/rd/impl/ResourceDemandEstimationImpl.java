@@ -40,7 +40,7 @@ public class ResourceDemandEstimationImpl implements ResourceDemandEstimation {
 			throw new IllegalArgumentException("An estimation for resource demand for resource id " + resourceId
 					+ " for internal action id " + internalActionId + " was not found.");
 		}
-		return rdModel.estimate(serviceCall.getParameters());
+		return rdModel.estimate(serviceCall);
 	}
 
 	private static class ResourceUtilizationRepositoryImpl implements ResourceUtilizationDataSet {

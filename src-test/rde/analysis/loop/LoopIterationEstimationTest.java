@@ -11,10 +11,11 @@ import org.apache.log4j.PatternLayout;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import rde.analysis.ServiceCallMock;
 import rde.analysis.ServiceParameters;
 import rde.analysis.impl.KiekerMonitoringReader;
-import rde.analysis.loop.WekaLoopIterationEstimation;
-import rde.analysis.loop.WekaLoopModel;
+import rde.analysis.loop.impl.LoopModel;
+import rde.analysis.loop.impl.WekaLoopModelEstimation;
 
 public class LoopIterationEstimationTest {
 
@@ -31,16 +32,16 @@ public class LoopIterationEstimationTest {
 	public void estimateLoopIterationTest() {
 		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
 		
-		WekaLoopIterationEstimation estimation = 
-				new WekaLoopIterationEstimation(reader.getCallRecordRepository(), reader.getLoopRepository());
+		WekaLoopModelEstimation estimation = 
+				new WekaLoopModelEstimation(reader.getCallRecordRepository(), reader.getLoopRepository());
 		
-		Map<String, WekaLoopModel> loopResult = estimation.estimateAll();
+		Map<String, LoopModel> loopResult = estimation.estimateAll();
 		
 		Map<String, Object> testParametersA12 = new HashMap<String, Object>();
 		testParametersA12.put("a", 12);
 		ServiceParameters testServiceParametersA12 = ServiceParameters.build(testParametersA12);
 		
-		double loopEstimationResult = loopResult.get("A.methodA-loop-0").estimateIterations(testServiceParametersA12);
+		double loopEstimationResult = loopResult.get("A.methodA-loop-0").estimateIterations(new ServiceCallMock(testServiceParametersA12));
 		assertEquals(12.0, loopEstimationResult, 10e-5);
 	}
 }
