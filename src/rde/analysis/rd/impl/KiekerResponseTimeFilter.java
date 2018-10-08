@@ -1,4 +1,4 @@
-package rde.analysis.rd;
+package rde.analysis.rd.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +12,10 @@ import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
 import monitoring.records.ResponseTimeRecord;
+import rde.analysis.rd.ResponseTimeDataSet;
 
 @Plugin(description = "A filter for response time records.")
-public final class KiekerResponseTimeFilter extends AbstractFilterPlugin {
+public final class KiekerResponseTimeFilter extends AbstractFilterPlugin implements ResponseTimeDataSet {
 
 	private static class ResponseTimeItem {
 		private final Double responseTime;
@@ -36,14 +37,17 @@ public final class KiekerResponseTimeFilter extends AbstractFilterPlugin {
 	
 	private final Map<String, Map<String, ArrayList<ResponseTimeRecord>>> internalActionIdAndReosurceIdToResponseTimeRecord;
 	
+	@Override
 	public Set<String> getInternalActionIds() {
 		return this.internalActionIdAndReosurceIdToResponseTimeRecord.keySet();
 	}
 	
+	@Override
 	public Set<String> getResourceIds(String internalActionId) {
 		return this.internalActionIdAndReosurceIdToResponseTimeRecord.get(internalActionId).keySet();
 	}
 	
+	@Override
 	public List<ResponseTimeRecord> getResponseTimes(String internalActionId, String resourceId) {
 		return this.internalActionIdAndReosurceIdToResponseTimeRecord.get(internalActionId).get(resourceId);
 	}
@@ -57,10 +61,12 @@ public final class KiekerResponseTimeFilter extends AbstractFilterPlugin {
 				new HashMap<String, Map<String,ArrayList<ResponseTimeRecord>>>();
 	}
 	
+	@Override
 	public Long getLatestEntry() {
 		return this.latestEntry;
 	}
 	
+	@Override
 	public Long getEarliestEntry() {
 		return this.earliestEntry;
 	}

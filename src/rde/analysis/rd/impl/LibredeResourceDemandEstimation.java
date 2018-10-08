@@ -1,4 +1,4 @@
-package rde.analysis.rd;
+package rde.analysis.rd.impl;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -13,9 +13,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.omg.IOP.ServiceIdHelper;
+
 import monitoring.records.ResponseTimeRecord;
-import rde.analysis.KiekerServiceCallRecordFilter;
+import rde.analysis.ServiceCallDataSet;
 import rde.analysis.ServiceParameters;
+import rde.analysis.rd.ResourceUtilizationDataSet;
+import rde.analysis.rd.ResponseTimeDataSet;
 import tools.descartes.librede.ApproachResult;
 import tools.descartes.librede.Librede;
 import tools.descartes.librede.LibredeResults;
@@ -65,24 +69,35 @@ public class LibredeResourceDemandEstimation {
 	
 	private static final Class<ServiceDemandLawApproach> ESTIMATION_APPROACH = ServiceDemandLawApproach.class;
 	
-	private final ResourceUtilizationRepository resourceUtilization;
+	private final ResourceUtilizationDataSet resourceUtilization;
 	
-	private final KiekerResponseTimeFilter responseTimeRepository;
+	private final ResponseTimeDataSet responseTimeRepository;
 	
-	private final KiekerServiceCallRecordFilter serviceCallRepository;
+	private final ServiceCallDataSet serviceCallRepository;
 	
-	private final Map<String, ServiceParameters> idToServiceParameters;
+	private final Map<String, ResourceDemandInfo> idToServiceParameters;
 	
 	private final Map<String, Resource> idToResource;
+	
+	private static class ResourceDemandInfo {
+		private final ServiceParameters serviceParameters;
+		private final String internalActionId;
+		private final String resourceId;
+		public ResourceDemandInfo(ServiceParameters serviceParameters, String internalActionId, String resourceId) {
+			this.serviceParameters = serviceParameters;
+			this.internalActionId = internalActionId;
+			this.resourceId = resourceId;
+		}
+	}
 
 	public LibredeResourceDemandEstimation( 
-			ResourceUtilizationRepository resourceUtilization,
-			KiekerResponseTimeFilter responseTimeRepository,
-			KiekerServiceCallRecordFilter serviceCallRepository) {
+			ResourceUtilizationDataSet resourceUtilization,
+			ResponseTimeDataSet responseTimeRepository,
+			ServiceCallDataSet serviceCallRepository) {
 		this.resourceUtilization = resourceUtilization;
 		this.responseTimeRepository = responseTimeRepository;
 		this.serviceCallRepository = serviceCallRepository;
-		this.idToServiceParameters = new HashMap<String, ServiceParameters>();
+		this.idToServiceParameters = new HashMap<String, ResourceDemandInfo>();
 		this.idToResource = new HashMap<String, Resource>();
 		this.buildConfig();
 	}
@@ -94,7 +109,7 @@ public class LibredeResourceDemandEstimation {
 		this.buildLibredeConfig();
 	}
 	
-	public void estimate() {
+	public Map<String, Map<String, Map<ServiceParameters, Double>>> estimate() {
 		
 		Map<String, IDataSource> dataSources = 
 				Collections.singletonMap(dataSourceConfig.getName(), dataSource);
@@ -108,11 +123,26 @@ public class LibredeResourceDemandEstimation {
 				new HashMap<String, Map<String,Map<ServiceParameters,Double>>>();
 		
 		for (int i = 0; i < resultResourceDemandIndex.length; i++) {
-			String internalActionId = resultResourceDemandIndex[i].getName();
-			String resourceId = resultResourceDemandIndex[i].getResource().getName();
+			String rdId = resultResourceDemandIndex[i].getName();
+			ResourceDemandInfo rdInfo = this.idToServiceParameters.get(rdId);
 			
-			System.out.println(internalActionId + "    " + resourceId + " : " + meanResults.get(i));
+			Map<String, Map<ServiceParameters, Double>> resourceEntries = 
+					results.get(rdInfo.internalActionId);
+			if (resourceEntries == null) {
+				resourceEntries = new HashMap<String, Map<ServiceParameters,Double>>();
+				results.put(rdInfo.internalActionId, resourceEntries);
+			}
+			
+			Map<ServiceParameters, Double> rdEntries = resourceEntries.get(rdInfo.resourceId);
+			if (rdEntries == null) {
+				rdEntries = new HashMap<ServiceParameters, Double>();
+				resourceEntries.put(rdInfo.resourceId, rdEntries);
+			}
+			
+			rdEntries.put(rdInfo.serviceParameters, meanResults.get(i));
 		}
+		
+		return results;
 	}
 	
 	private InMemoryDataSource dataSource;
@@ -208,7 +238,8 @@ public class LibredeResourceDemandEstimation {
 				rtId = internalActionId + "#" + resourceId + "#" + distinctParameterId;
 				distinctParameterId++;
 				parametersToId.put(parameters, rtId);
-				this.idToServiceParameters.put(rtId, parameters);
+				ResourceDemandInfo rdInfo = new ResourceDemandInfo(parameters, internalActionId, resourceId);
+				this.idToServiceParameters.put(rtId, rdInfo);
 			}
 			
 			SortedMap<Long, Double> rts = parameterIdToRts.get(rtId);

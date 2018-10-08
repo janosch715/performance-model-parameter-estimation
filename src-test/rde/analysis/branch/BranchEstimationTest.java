@@ -11,10 +11,11 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import rde.analysis.KiekerMonitoringReader;
+
 import rde.analysis.ServiceParameters;
 import rde.analysis.branch.BranchExecutionEstimation;
 import rde.analysis.branch.WekaBranchModel;
+import rde.analysis.impl.KiekerMonitoringReader;
 
 public class BranchEstimationTest {
 

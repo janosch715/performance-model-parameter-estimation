@@ -46,7 +46,7 @@ public class ServiceParameters {
 	
 	static {
 		mapper = new ObjectMapper();
-		mapper.configure(JsonParser.Feature.ALLOW_TRAILING_COMMA, true);
+		mapper.enable(JsonParser.Feature.ALLOW_TRAILING_COMMA);
 	}
 	
 	private ServiceParameters(Map<String, Object> parameters) {

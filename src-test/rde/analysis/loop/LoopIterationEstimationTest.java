@@ -10,9 +10,10 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import rde.analysis.KiekerMonitoringReader;
+
 import rde.analysis.ServiceParameters;
-import rde.analysis.loop.LoopIterationEstimation;
+import rde.analysis.impl.KiekerMonitoringReader;
+import rde.analysis.loop.WekaLoopIterationEstimation;
 import rde.analysis.loop.WekaLoopModel;
 
 public class LoopIterationEstimationTest {
@@ -30,8 +31,8 @@ public class LoopIterationEstimationTest {
 	public void estimateLoopIterationTest() {
 		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
 		
-		LoopIterationEstimation estimation = 
-				new LoopIterationEstimation(reader.getCallRecordRepository(), reader.getLoopRepository());
+		WekaLoopIterationEstimation estimation = 
+				new WekaLoopIterationEstimation(reader.getCallRecordRepository(), reader.getLoopRepository());
 		
 		Map<String, WekaLoopModel> loopResult = estimation.estimateAll();
 		

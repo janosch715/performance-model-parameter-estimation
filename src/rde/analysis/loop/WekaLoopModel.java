@@ -1,11 +1,11 @@
 package rde.analysis.loop;
 
 import rde.analysis.ServiceParameters;
-import rde.analysis.WekaServiceParametersModel;
+import rde.analysis.util.WekaServiceParametersModel;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 
-public class WekaLoopModel {
+public class WekaLoopModel implements LoopModel {
 	
 	private final Classifier classifier;
 	private final WekaServiceParametersModel parametersConversion;
@@ -15,6 +15,7 @@ public class WekaLoopModel {
 		this.parametersConversion = parametersConversion;
 	}
 
+	@Override
 	public double estimateIterations(ServiceParameters parameters) {
 		Instance parametersInstance = this.parametersConversion.buildInstance(parameters, 0);
 		try {

@@ -1,19 +1,20 @@
 package rde.analysis;
 
+import rde.analysis.util.WekaServiceParametersModel;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 
 public class WekaDataSet {
 
-	private final KiekerServiceCallRecordFilter serviceCallRepository;
+	private final ServiceCallDataSet serviceCallRepository;
 	
 	private WekaServiceParametersModel parametersConversion;
 	
 	private Instances dataset;
 	
 	public WekaDataSet(
-			KiekerServiceCallRecordFilter serviceCallRepository, 
+			ServiceCallDataSet serviceCallRepository, 
 			String initialServiceExecutionId,
 			Attribute classAttribute) {
 		this.serviceCallRepository = serviceCallRepository;

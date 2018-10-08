@@ -1,4 +1,4 @@
-package rde.analysis.rd;
+package rde.analysis.rd.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +12,10 @@ import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.system.CPUUtilizationRecord;
+import rde.analysis.rd.ResourceUtilizationDataSet;
 
 @Plugin(description = "A filter for cpu utilization records.")
-public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin implements ResourceUtilizationRepository {
+public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin implements ResourceUtilizationDataSet {
 
 	private final Map<String, SortedMap<Long, Double>> cpuUtilization;
 	

@@ -12,6 +12,8 @@ import org.apache.log4j.PatternLayout;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import rde.analysis.impl.KiekerMonitoringReader;
+
 public class KiekerMonitoringReaderTest {
 	
 	@BeforeClass

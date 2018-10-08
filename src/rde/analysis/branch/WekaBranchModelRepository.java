@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.palladiosimulator.pcm.seff.AbstractBranchTransition;
 import org.palladiosimulator.pcm.seff.BranchAction;
+
+import rde.analysis.ServiceCall;
 import rde.analysis.ServiceParameters;
 
 public class WekaBranchModelRepository {
@@ -19,12 +21,12 @@ public class WekaBranchModelRepository {
 		this.modelCache.putAll(models);
 	}
 	
-	public AbstractBranchTransition estimateBranch(BranchAction branch, ServiceParameters serviceParameters) {
+	public AbstractBranchTransition estimateBranch(BranchAction branch, ServiceCall serviceCall) {
 		WekaBranchModel branchModel = this.modelCache.get(branch.getId());
 		if (branchModel == null) {
 			throw new IllegalArgumentException("An estimation for branch with id " + branch.getId() + " was not found.");
 		}
-		String estimatedBranchId = branchModel.estimateBranchId(serviceParameters);
+		String estimatedBranchId = branchModel.estimateBranchId(serviceCall.getParameters());
 		
 		Optional<AbstractBranchTransition> estimatedBranch = branch.getBranches_Branch().stream()
 				.filter(transition -> transition.getId().equals(estimatedBranchId))

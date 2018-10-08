@@ -1,4 +1,4 @@
-package rde.analysis.rd;
+package rde.analysis.rd.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +12,6 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import org.palladiosimulator.pcm.repository.BasicComponent;
 import org.palladiosimulator.pcm.repository.Repository;
-import org.palladiosimulator.pcm.resourcetype.ProcessingResourceType;
 import org.palladiosimulator.pcm.seff.AbstractAction;
 import org.palladiosimulator.pcm.seff.AbstractBranchTransition;
 import org.palladiosimulator.pcm.seff.BranchAction;
@@ -24,19 +23,20 @@ import org.palladiosimulator.pcm.seff.StartAction;
 import org.palladiosimulator.pcm.seff.StopAction;
 import org.palladiosimulator.pcm.seff.seff_performance.ParametricResourceDemand;
 
-import rde.analysis.ServiceExecutionItem;
-import rde.analysis.ServiceParameters;
+import rde.analysis.ServiceCallDataSet;
+import rde.analysis.ServiceCall;
 import rde.analysis.branch.WekaBranchModelRepository;
-import rde.analysis.loop.WekaLoopModelRepository;
+import rde.analysis.loop.LoopEstimation;
+import rde.analysis.rd.ResourceDemandEstimation;
 
-public class UtilizationEstimation implements ResourceUtilizationRepository {
+public class UtilizationEstimation {
 
 	private static class ServiceCallRdEstimation {
-		private final Map<ProcessingResourceType, Double> resourceDemands;
-		private final ServiceExecutionItem serviceCall;
+		private final Map<String, Double> resourceDemands;
+		private final ServiceCall serviceCall;
 
-		public ServiceCallRdEstimation(ServiceExecutionItem serviceCall,
-				Map<ProcessingResourceType, Double> resourceDemands) {
+		public ServiceCallRdEstimation(ServiceCall serviceCall,
+				Map<String, Double> resourceDemands) {
 			this.resourceDemands = resourceDemands;
 			this.serviceCall = serviceCall;
 		}
@@ -49,13 +49,13 @@ public class UtilizationEstimation implements ResourceUtilizationRepository {
 
 	private final Map<String, ResourceDemandingSEFF> serviceIdToSeff;
 
-	private final List<ServiceExecutionItem> serviceCalls;
+	private final ServiceCallDataSet serviceCallRepository;
 
-	private final WekaLoopModelRepository loopEstimation;
+	private final LoopEstimation loopEstimation;
 
 	private final WekaBranchModelRepository branchEstimation;
 
-	private final WekaResourceDemandModelRepository rdEstimation;
+	private final ResourceDemandEstimation rdEstimation;
 
 	private final SortedMap<Long, List<ServiceCallRdEstimation>> estimations;
 
@@ -64,12 +64,12 @@ public class UtilizationEstimation implements ResourceUtilizationRepository {
 	private long lastServiceCallOn = Long.MIN_VALUE;
 
 	public UtilizationEstimation(Set<String> ignoredInternalActionIds, Repository pcmRepository,
-			List<ServiceExecutionItem> serviceCalls, WekaLoopModelRepository loopEstimation,
-			WekaBranchModelRepository branchEstimation, WekaResourceDemandModelRepository rdEstimation) {
+			ServiceCallDataSet serviceCallRepository, LoopEstimation loopEstimation,
+			WekaBranchModelRepository branchEstimation, ResourceDemandEstimation rdEstimation) {
 
 		this.ignoredInternalActionIds = ignoredInternalActionIds;
 		this.pcmRepository = pcmRepository;
-		this.serviceCalls = serviceCalls;
+		this.serviceCallRepository = serviceCallRepository;
 		this.loopEstimation = loopEstimation;
 		this.branchEstimation = branchEstimation;
 		this.rdEstimation = rdEstimation;
@@ -81,37 +81,30 @@ public class UtilizationEstimation implements ResourceUtilizationRepository {
 				.filter(ResourceDemandingSEFF.class::isInstance).map(component -> (ResourceDemandingSEFF) component)
 				.collect(Collectors.toMap(seff -> seff.getDescribedService__SEFF().getId(), seff -> seff));
 
-		this.estimate();
+		this.estimateAllResourceDemands();
 	}
 	
-	@Override
-	public SortedMap<Long, Double> getUtilization(String resourceId) {
-
-	}
-
-	@Override
-	public Set<String> getResourceIds() {
-	
-	}
-	
-	public void estimateMonitoredActionUtilization(
+	public SortedMap<Long, Double> estimateRemainingUtilization(
 			String resourceId, 
-			SortedMap<Long, Double> resourceUtilization) {
+			SortedMap<Long, Double> completeResourceUtilization) {
 		
 		SortedMap<Long, Double> monitoredActionsUtilization =
 				new TreeMap<Long, Double>();
 		
 		Entry<Long, Double> lastUtilizationRecord = null;
-		for (Entry<Long, Double> utilizationRecord : resourceUtilization.entrySet()) {
+		for (Entry<Long, Double> utilizationRecord : completeResourceUtilization.entrySet()) {
 			if (lastUtilizationRecord != null) {
-				Map<ProcessingResourceType, Double> currentNotMonitoredUtilization = 
-						this.estimate(lastUtilizationRecord.getKey(), utilizationRecord.getKey());
+				Map<String, Double> currentNotMonitoredUtilization = 
+						this.estimateUtilization(lastUtilizationRecord.getKey(), utilizationRecord.getKey());
 				
-				Optional<Entry<ProcessingResourceType, Double>> currentNotMonitoredUtilizationOfResourceEntry = 
+				Optional<Entry<String, Double>> currentNotMonitoredUtilizationOfResourceEntry = 
 					currentNotMonitoredUtilization.entrySet().stream()
-						.filter(d -> d.getKey().getId().equals(resourceId))
+						.filter(d -> d.getKey().equals(resourceId))
 						.findFirst();
 				
+				if (currentNotMonitoredUtilizationOfResourceEntry.isPresent() == false) {
+					continue;
+				}
 				Double currentNotMonitoredUtilizationOfResource = 
 						currentNotMonitoredUtilizationOfResourceEntry.get().getValue();
 				
@@ -123,10 +116,11 @@ public class UtilizationEstimation implements ResourceUtilizationRepository {
 			}
 			lastUtilizationRecord = utilizationRecord;
 		}
+		return monitoredActionsUtilization;
 	}
 
-	public Map<ProcessingResourceType, Double> estimate(long fromInclusive, long toExclusive) {
-		Map<ProcessingResourceType, Double> utilization = new HashMap<ProcessingResourceType, Double>();
+	public Map<String, Double> estimateUtilization(long fromInclusive, long toExclusive) {
+		Map<String, Double> utilization = new HashMap<String, Double>();
 		for (Entry<Long, List<ServiceCallRdEstimation>> serviceCallRdEstimations : this.estimations
 				.subMap(fromInclusive, toExclusive).entrySet()) {
 			for (ServiceCallRdEstimation serviceCallRdEstimation : serviceCallRdEstimations.getValue()) {
@@ -138,13 +132,13 @@ public class UtilizationEstimation implements ResourceUtilizationRepository {
 		return utilization;
 	}
 
-	private void estimate() {
-		for (ServiceExecutionItem serviceCall : this.serviceCalls) {
-			Map<ProcessingResourceType, Double> estimatedRds = this
-					.estimateResourceDemand(serviceCall.getRecord().getServiceId(), serviceCall.getParameters());
+	private void estimateAllResourceDemands() {
+		for (ServiceCall serviceCall : this.serviceCallRepository.getServiceCalls()) {
+			Map<String, Double> estimatedRds = this
+					.estimateResourceDemand(serviceCall);
 			ServiceCallRdEstimation item = new ServiceCallRdEstimation(serviceCall, estimatedRds);
 
-			long entryTime = serviceCall.getRecord().getEntryTime();
+			long entryTime = serviceCall.getEntryTime();
 			List<ServiceCallRdEstimation> rdsForTime = this.estimations.get(entryTime);
 			if (rdsForTime == null) {
 				rdsForTime = new ArrayList<UtilizationEstimation.ServiceCallRdEstimation>();
@@ -158,36 +152,35 @@ public class UtilizationEstimation implements ResourceUtilizationRepository {
 		}
 	}
 
-	private Map<ProcessingResourceType, Double> estimateResourceDemand(String serviceId,
-			ServiceParameters serviceParameters) {
-		ResourceDemandingBehaviour seff = this.serviceIdToSeff.get(serviceId);
+	private Map<String, Double> estimateResourceDemand(ServiceCall serviceCall) {
+		ResourceDemandingBehaviour seff = this.serviceIdToSeff.get(serviceCall.getServiceId());
 		if (seff == null) {
-			throw new IllegalArgumentException("No seff for service id " + serviceId + " found.");
+			throw new IllegalArgumentException("No seff for service id " + serviceCall.getServiceId() + " found.");
 		}
-		Map<ProcessingResourceType, Double> resourceDemands = new HashMap<ProcessingResourceType, Double>();
-		this.estimateSeffResourceDemand(seff, serviceParameters, resourceDemands);
+		Map<String, Double> resourceDemands = new HashMap<String, Double>();
+		this.estimateSeffResourceDemand(seff, serviceCall, resourceDemands);
 		return resourceDemands;
 	}
 
-	private void estimateSeffResourceDemand(ResourceDemandingBehaviour seff, ServiceParameters serviceParameters,
-			Map<ProcessingResourceType, Double> resourceDemands) {
+	private void estimateSeffResourceDemand(ResourceDemandingBehaviour seff, ServiceCall serviceCall,
+			Map<String, Double> resourceDemands) {
 		StartAction startAction = findStartAction(seff);
-		this.estimateResourceDemand(startAction.getSuccessor_AbstractAction(), serviceParameters, resourceDemands);
+		this.estimateResourceDemand(startAction.getSuccessor_AbstractAction(), serviceCall, resourceDemands);
 	}
 
-	private void estimateResourceDemand(AbstractAction action, ServiceParameters serviceParameters,
-			Map<ProcessingResourceType, Double> resourceDemands) {
+	private void estimateResourceDemand(AbstractAction action, ServiceCall serviceCall,
+			Map<String, Double> resourceDemands) {
 		AbstractAction currentAction = action;
 		while (true) {
 			if (currentAction instanceof BranchAction) {
-				currentAction = this.estimateBranchResourceDemand((BranchAction) currentAction, serviceParameters,
+				currentAction = this.estimateBranchResourceDemand((BranchAction) currentAction, serviceCall,
 						resourceDemands);
 			} else if (currentAction instanceof LoopAction) {
-				currentAction = this.estimateLoopResourceDemand((LoopAction) currentAction, serviceParameters,
+				currentAction = this.estimateLoopResourceDemand((LoopAction) currentAction, serviceCall,
 						resourceDemands);
 			} else if (currentAction instanceof InternalAction) {
 				currentAction = this.estimateInternalActionResourceDemand((InternalAction) currentAction,
-						serviceParameters, resourceDemands);
+						serviceCall, resourceDemands);
 			} else if (currentAction instanceof StopAction) {
 				return;
 			} else {
@@ -198,56 +191,57 @@ public class UtilizationEstimation implements ResourceUtilizationRepository {
 	}
 
 	private AbstractAction estimateInternalActionResourceDemand(InternalAction internalAction,
-			ServiceParameters serviceParameters, Map<ProcessingResourceType, Double> resourceDemands) {
+			ServiceCall serviceCall, Map<String, Double> resourceDemands) {
 		if (this.ignoredInternalActionIds.contains(internalAction.getId()) == false) {
 			for (ParametricResourceDemand rd : internalAction.getResourceDemand_Action()) {
-				double estimatedRd = this.rdEstimation.estimateResourceDemand(internalAction.getId(), rd,
-						serviceParameters);
-				addResourceDemands(resourceDemands, rd.getRequiredResource_ParametricResourceDemand(), estimatedRd);
+				String resourceId = rd.getRequiredResource_ParametricResourceDemand().getId();
+				double estimatedRd = this.rdEstimation.estimateResourceDemand(internalAction.getId(), resourceId,
+						serviceCall);
+				addResourceDemands(resourceDemands, rd.getRequiredResource_ParametricResourceDemand().getId(), estimatedRd);
 			}
 		}
 		return internalAction.getSuccessor_AbstractAction();
 	}
 
-	private AbstractAction estimateBranchResourceDemand(BranchAction branchAction, ServiceParameters serviceParameters,
-			Map<ProcessingResourceType, Double> resourceDemands) {
+	private AbstractAction estimateBranchResourceDemand(BranchAction branchAction, ServiceCall serviceCall,
+			Map<String, Double> resourceDemands) {
 		AbstractBranchTransition estimatedBranch = this.branchEstimation.estimateBranch(branchAction,
-				serviceParameters);
+				serviceCall);
 		ResourceDemandingBehaviour branchSeff = estimatedBranch.getBranchBehaviour_BranchTransition();
-		this.estimateSeffResourceDemand(branchSeff, serviceParameters, resourceDemands);
+		this.estimateSeffResourceDemand(branchSeff, serviceCall, resourceDemands);
 		return branchAction.getSuccessor_AbstractAction();
 	}
 
-	private AbstractAction estimateLoopResourceDemand(LoopAction loopAction, ServiceParameters serviceParameters,
-			Map<ProcessingResourceType, Double> resourceDemands) {
-		double iterations = this.loopEstimation.estimateIterations(loopAction, serviceParameters);
-		Map<ProcessingResourceType, Double> innerLoopResourceDemands = new HashMap<ProcessingResourceType, Double>();
+	private AbstractAction estimateLoopResourceDemand(LoopAction loopAction, ServiceCall serviceCall,
+			Map<String, Double> resourceDemands) {
+		double iterations = this.loopEstimation.estimateIterations(loopAction, serviceCall);
+		Map<String, Double> innerLoopResourceDemands = new HashMap<String, Double>();
 		ResourceDemandingBehaviour loopSeff = loopAction.getBodyBehaviour_Loop();
-		this.estimateSeffResourceDemand(loopSeff, serviceParameters, innerLoopResourceDemands);
+		this.estimateSeffResourceDemand(loopSeff, serviceCall, innerLoopResourceDemands);
 		multiplyResourceDemands(innerLoopResourceDemands, iterations);
 		addResourceDemands(resourceDemands, innerLoopResourceDemands);
 		return loopAction.getSuccessor_AbstractAction();
 	}
 
-	private static void addResourceDemands(Map<ProcessingResourceType, Double> rds,
-			Map<ProcessingResourceType, Double> rdsToAdd) {
-		for (Entry<ProcessingResourceType, Double> rd : rdsToAdd.entrySet()) {
+	private static void addResourceDemands(Map<String, Double> rds,
+			Map<String, Double> rdsToAdd) {
+		for (Entry<String, Double> rd : rdsToAdd.entrySet()) {
 			addResourceDemands(rds, rd.getKey(), rd.getValue());
 		}
 	}
 
-	private static void addResourceDemands(Map<ProcessingResourceType, Double> rds, ProcessingResourceType resourceType,
+	private static void addResourceDemands(Map<String, Double> rds, String resourceId,
 			double resourceDemand) {
-		Double rdValue = rds.get(resourceType);
+		Double rdValue = rds.get(resourceId);
 		if (rdValue != null) {
 			rdValue = 0.0;
 		}
 		rdValue += resourceDemand;
-		rds.put(resourceType, rdValue);
+		rds.put(resourceId, rdValue);
 	}
 
-	private static void multiplyResourceDemands(Map<ProcessingResourceType, Double> rds, double factor) {
-		for (Entry<ProcessingResourceType, Double> rd : rds.entrySet()) {
+	private static void multiplyResourceDemands(Map<String, Double> rds, double factor) {
+		for (Entry<String, Double> rd : rds.entrySet()) {
 			rds.put(rd.getKey(), rd.getValue() * factor);
 		}
 	}

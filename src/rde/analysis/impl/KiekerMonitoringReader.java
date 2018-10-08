@@ -1,13 +1,15 @@
-package rde.analysis;
+package rde.analysis.impl;
 
 import kieker.analysis.AnalysisController;
 import kieker.analysis.IAnalysisController;
 import kieker.analysis.plugin.reader.filesystem.FSReader;
 import kieker.common.configuration.Configuration;
+import rde.analysis.ServiceCallDataSet;
 import rde.analysis.branch.KiekerBranchExecutionFilter;
 import rde.analysis.loop.KiekerLoopIterationFilter;
-import rde.analysis.rd.KiekerCpuUtilizationFilter;
-import rde.analysis.rd.KiekerResponseTimeFilter;
+import rde.analysis.rd.ResponseTimeDataSet;
+import rde.analysis.rd.impl.KiekerCpuUtilizationFilter;
+import rde.analysis.rd.impl.KiekerResponseTimeFilter;
 
 public class KiekerMonitoringReader {
 
@@ -21,11 +23,11 @@ public class KiekerMonitoringReader {
 		this.read(kiekerRecordsDirectoryPath);
 	}
 
-	public KiekerResponseTimeFilter getResponseTimeRepository() {
+	public ResponseTimeDataSet getResponseTimeRepository() {
 		return responseTimeFilter;
 	}
 
-	public KiekerServiceCallRecordFilter getCallRecordRepository() {
+	public ServiceCallDataSet getCallRecordRepository() {
 		return callRecordFilter;
 	}
 

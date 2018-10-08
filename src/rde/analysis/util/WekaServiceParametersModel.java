@@ -1,7 +1,10 @@
-package rde.analysis;
+package rde.analysis.util;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
+
+import rde.analysis.ServiceParameters;
+
 import java.util.Set;
 
 import weka.core.Attribute;

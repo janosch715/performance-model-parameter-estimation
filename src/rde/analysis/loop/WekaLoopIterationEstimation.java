@@ -5,20 +5,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import monitoring.records.LoopRecord;
-import rde.analysis.KiekerServiceCallRecordFilter;
+import rde.analysis.ServiceCallDataSet;
 import rde.analysis.WekaDataSet;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.LinearRegression;
 import weka.core.Attribute;
 import weka.core.Instances;
 
-public class LoopIterationEstimation {
+public class WekaLoopIterationEstimation {
 
-	private final KiekerServiceCallRecordFilter serviceCallRepository;
+	private final ServiceCallDataSet serviceCallRepository;
 
 	private final KiekerLoopIterationFilter loopIterationRepository;
 
-	public LoopIterationEstimation(KiekerServiceCallRecordFilter serviceCallRepository,
+	public WekaLoopIterationEstimation(ServiceCallDataSet serviceCallRepository,
 			KiekerLoopIterationFilter loopIterationRepository) {
 		this.serviceCallRepository = serviceCallRepository;
 		this.loopIterationRepository = loopIterationRepository;

@@ -3,7 +3,7 @@ package rde.analysis.branch;
 import java.util.Random;
 
 import rde.analysis.ServiceParameters;
-import rde.analysis.WekaServiceParametersModel;
+import rde.analysis.util.WekaServiceParametersModel;
 import weka.classifiers.functions.Logistic;
 import weka.core.Instance;
 import weka.core.Instances;

@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import monitoring.records.BranchRecord;
-import rde.analysis.KiekerServiceCallRecordFilter;
+import rde.analysis.ServiceCallDataSet;
 import rde.analysis.WekaDataSet;
 import weka.classifiers.Evaluation;
 import weka.classifiers.functions.Logistic;
@@ -17,20 +17,20 @@ import weka.core.Instances;
 
 public class BranchExecutionEstimation {
 
-	private final KiekerServiceCallRecordFilter serviceCallRepository;
+	private final ServiceCallDataSet serviceCallRepository;
 
 	private final KiekerBranchExecutionFilter branchExecutionRepository;
 	
 	private final Random random;
 
 	public BranchExecutionEstimation(
-			KiekerServiceCallRecordFilter serviceCallRepository,
+			ServiceCallDataSet serviceCallRepository,
 			KiekerBranchExecutionFilter branchExecutionRepository) {
 		this(serviceCallRepository, branchExecutionRepository, new Random((long) Math.random()));
 	}
 	
 	public BranchExecutionEstimation(
-			KiekerServiceCallRecordFilter serviceCallRepository,
+			ServiceCallDataSet serviceCallRepository,
 			KiekerBranchExecutionFilter branchExecutionRepository,
 			Random random) {
 		this.serviceCallRepository = serviceCallRepository;
