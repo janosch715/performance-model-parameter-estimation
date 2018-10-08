@@ -1,6 +1,6 @@
 $0=kieker.common.record.misc.KiekerMetadataRecord
-$1=monitoring.records.ResponseTimeRecord
-$2=monitoring.records.LoopRecord
-$3=monitoring.records.ServiceCallRecord
-$4=monitoring.records.BranchRecord
+$1=tools.vitruv.applications.pcmjava.seffstatements.parameters.monitoring.records.ResponseTimeRecord
+$2=tools.vitruv.applications.pcmjava.seffstatements.parameters.monitoring.records.LoopRecord
+$3=tools.vitruv.applications.pcmjava.seffstatements.parameters.monitoring.records.ServiceCallRecord
+$4=tools.vitruv.applications.pcmjava.seffstatements.parameters.monitoring.records.BranchRecord
 $5=kieker.common.record.system.CPUUtilizationRecord
