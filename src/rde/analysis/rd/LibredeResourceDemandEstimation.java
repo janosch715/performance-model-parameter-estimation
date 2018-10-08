@@ -9,14 +9,17 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import monitoring.records.ResponseTimeRecord;
 import rde.analysis.KiekerServiceCallRecordFilter;
 import rde.analysis.ServiceParameters;
+import tools.descartes.librede.ApproachResult;
 import tools.descartes.librede.Librede;
 import tools.descartes.librede.LibredeResults;
+import tools.descartes.librede.approach.IEstimationApproach;
 import tools.descartes.librede.approach.ServiceDemandLawApproach;
 import tools.descartes.librede.configuration.ConfigurationFactory;
 import tools.descartes.librede.configuration.ConfigurationPackage;
@@ -37,6 +40,7 @@ import tools.descartes.librede.configuration.WorkloadDescription;
 import tools.descartes.librede.datasource.IDataSource;
 import tools.descartes.librede.datasource.memory.InMemoryDataSource;
 import tools.descartes.librede.linalg.MatrixBuilder;
+import tools.descartes.librede.linalg.Vector;
 import tools.descartes.librede.linalg.VectorBuilder;
 import tools.descartes.librede.metrics.Aggregation;
 import tools.descartes.librede.metrics.StandardMetrics;
@@ -59,6 +63,8 @@ public class LibredeResourceDemandEstimation {
 
 	private static final String DATA_SOURCE_NAME = "InMemoryDataSource";
 	
+	private static final Class<ServiceDemandLawApproach> ESTIMATION_APPROACH = ServiceDemandLawApproach.class;
+	
 	private final ResourceUtilizationRepository resourceUtilization;
 	
 	private final KiekerResponseTimeFilter responseTimeRepository;
@@ -78,20 +84,35 @@ public class LibredeResourceDemandEstimation {
 		this.serviceCallRepository = serviceCallRepository;
 		this.idToServiceParameters = new HashMap<String, ServiceParameters>();
 		this.idToResource = new HashMap<String, Resource>();
-		this.estimate();
+		this.buildConfig();
 	}
 	
-	private void estimate() {
+	private void buildConfig() {
 		this.buildWorkloadDescription();
 		this.addAllResourcesUtilization();
 		this.addAllResourceDemands();
 		this.buildLibredeConfig();
-
+	}
+	
+	public void estimate() {
+		
 		Map<String, IDataSource> dataSources = 
 				Collections.singletonMap(dataSourceConfig.getName(), dataSource);
-		LibredeResults results = Librede.execute(libredeConfig, dataSources);
+		LibredeResults libredeResults = Librede.execute(libredeConfig, dataSources);
+		ApproachResult approachResult = libredeResults.getApproachResults(ESTIMATION_APPROACH);
 		
-		System.out.println();
+		ResourceDemand[] resultResourceDemandIndex = approachResult.getResultOfFold(0).getStateVariables();
+		Vector meanResults = approachResult.getMeanEstimates();
+		
+		Map<String, Map<String, Map<ServiceParameters, Double>>> results = 
+				new HashMap<String, Map<String,Map<ServiceParameters,Double>>>();
+		
+		for (int i = 0; i < resultResourceDemandIndex.length; i++) {
+			String internalActionId = resultResourceDemandIndex[i].getName();
+			String resourceId = resultResourceDemandIndex[i].getResource().getName();
+			
+			System.out.println(internalActionId + "    " + resourceId + " : " + meanResults.get(i));
+		}
 	}
 	
 	private InMemoryDataSource dataSource;
@@ -248,13 +269,13 @@ public class LibredeResourceDemandEstimation {
 
 		ValidationSpecification validationSpecification = configurationFactory.createValidationSpecification();
 		validationSpecification.setValidateEstimates(true);
-		validationSpecification.setValidationFolds(5);
+		validationSpecification.setValidationFolds(3);
 		validationSpecification.getValidators().add(validatorConfiguration);
 
 		OutputSpecification outputSpecification = configurationFactory.createOutputSpecification();
 
 		EstimationApproachConfiguration estimationConf = configurationFactory.createEstimationApproachConfiguration();
-		estimationConf.setType(ServiceDemandLawApproach.class.getCanonicalName());
+		estimationConf.setType(ESTIMATION_APPROACH.getCanonicalName());
 
 		EstimationSpecification estimationSpecification = configurationFactory.createEstimationSpecification();
 		estimationSpecification.getApproaches().add(estimationConf);
@@ -284,16 +305,24 @@ public class LibredeResourceDemandEstimation {
 		libredeConfig.setWorkloadDescription(workloadDescription);
 	}
 	
-	public void saveConfig(String filePath) throws IOException {
+	public void saveConfig(String filePath) {
+		try {
+			this.internSaveConfig(filePath);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void internSaveConfig(String filePath) throws IOException {
 		ResourceSet resourceSet = new ResourceSetImpl();
 
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
 				org.eclipse.emf.ecore.resource.Resource.Factory.Registry.DEFAULT_EXTENSION,
 				new XMIResourceFactoryImpl());
-
-		ResourceSet resSet = new ResourceSetImpl();
-		org.eclipse.emf.ecore.resource.Resource resource = resSet
-				.createResource(org.eclipse.emf.common.util.URI.createFileURI(filePath));
+		
+		URI filePathUri = org.eclipse.emf.common.util.URI.createFileURI(filePath);
+		org.eclipse.emf.ecore.resource.Resource resource = 
+				resourceSet.createResource(filePathUri);
 		resource.getContents().add(this.libredeConfig);
 		resource.save(Collections.EMPTY_MAP);
 	}

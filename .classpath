@@ -40,9 +40,9 @@
 	<classpathentry exported="true" kind="lib" path="target/dependency/weka-stable.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.bayesplusplus.java.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.connector.dml.jar"/>
-	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.estimation.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.estimation.jar" sourcepath="/tools.descartes.librede.estimation"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.ipopt.java.jar"/>
-	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.linalg.jar"/>
+	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.linalg.jar" sourcepath="/tools.descartes.librede.linalg"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.model.edit.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.model.editor.jar"/>
 	<classpathentry exported="true" kind="lib" path="target/dependency/tools.descartes.librede.model.jar"/>

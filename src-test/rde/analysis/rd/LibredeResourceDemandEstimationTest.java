@@ -36,5 +36,21 @@ public class LibredeResourceDemandEstimationTest {
 					reader.getResponseTimeRepository(), 
 					reader.getCallRecordRepository());
 		
+		estimation.saveConfig("./test-data/simple/temp.librede");
+		
+		estimation.estimate();
+	}
+	
+	@Test
+	public void estimateLoopIterationTest2() {
+		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
+		
+		LibredeResourceDemandEstimation estimation = 
+			new LibredeResourceDemandEstimation(
+					reader.getCpuRepository(), 
+					reader.getResponseTimeRepository(), 
+					reader.getCallRecordRepository());
+		
+		estimation.saveConfig("./test-data/withnames/temp.librede");
 	}
 }

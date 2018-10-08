@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="ASCII"?>
+<librede:LibredeConfiguration xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:librede="http://www.descartes-research.net/librede/configuration/1.0">
+  <workloadDescription>
+    <resources name="_oro4gG3fEdy4YaaT-RYrLQ"/>
+    <services name="A.methodA-internal-1#CPU#0">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#2">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#1">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#4">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#3">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#6">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#5">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#8">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-1#CPU#7">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#7">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#6">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#5">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#4">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#9">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#8">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#3">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#2">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#1">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+    <services name="A.methodA-internal-0#CPU#0">
+      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+    </services>
+  </workloadDescription>
+  <input>
+    <dataSources name="InMemoryDataSource" type="tools.descartes.librede.datasource.memory.InMemoryDataSource"/>
+    <observations xsi:type="librede:FileTraceConfiguration" aggregation="AVERAGE" dataSource="//@input/@dataSources.0" location="_oro4gG3fEdy4YaaT-RYrLQ" file="">
+      <metric href="librede:metrics#UTILIZATION"/>
+      <unit href="librede:units#PERCENTAGE"/>
+      <interval value="10.0">
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@resources.0"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#0" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.0"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#2" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.1"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#1" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.2"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#4" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.3"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#3" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.4"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#6" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.5"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#5" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.6"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#8" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.7"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-1#CPU#7" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.8"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#7" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.9"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#6" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.10"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#5" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.11"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#4" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.12"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#9" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.13"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#8" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.14"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#3" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.15"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#2" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.16"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#1" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.17"/>
+    </observations>
+    <observations xsi:type="librede:FileTraceConfiguration" dataSource="//@input/@dataSources.0" location="A.methodA-internal-0#CPU#0" file="">
+      <metric href="librede:metrics#RESPONSE_TIME"/>
+      <unit href="librede:units#SECONDS"/>
+      <interval>
+        <unit href="librede:units#SECONDS"/>
+      </interval>
+      <mappings entity="//@workloadDescription/@services.18"/>
+    </observations>
+  </input>
+  <estimation window="30">
+    <approaches type="tools.descartes.librede.approach.ServiceDemandLawApproach"/>
+    <stepSize value="30.0">
+      <unit href="librede:units#SECONDS"/>
+    </stepSize>
+    <startTimestamp value="1.5387698603300695E9">
+      <unit href="librede:units#SECONDS"/>
+    </startTimestamp>
+    <endTimestamp value="1.5387698559988146E9">
+      <unit href="librede:units#SECONDS"/>
+    </endTimestamp>
+  </estimation>
+  <output/>
+  <validation validationFolds="2" validateEstimates="true">
+    <validators type="tools.descartes.librede.validation.ResponseTimeValidator"/>
+  </validation>
+</librede:LibredeConfiguration>
