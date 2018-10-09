@@ -106,4 +106,9 @@ public final class KiekerResponseTimeFilter extends AbstractFilterPlugin impleme
 	public Configuration getCurrentConfiguration() {
 		return new Configuration();
 	}
+
+	@Override
+	public double timeToSeconds(long time) {
+		return time / 1.0e9;
+	}
 }

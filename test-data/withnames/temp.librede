@@ -3,61 +3,61 @@
   <workloadDescription>
     <resources name="_oro4gG3fEdy4YaaT-RYrLQ"/>
     <services name="A.methodA-internal-1#CPU#0">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#0"/>
     </services>
     <services name="A.methodA-internal-1#CPU#2">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#2"/>
     </services>
     <services name="A.methodA-internal-1#CPU#1">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#1"/>
     </services>
     <services name="A.methodA-internal-1#CPU#4">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#4"/>
     </services>
     <services name="A.methodA-internal-1#CPU#3">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#3"/>
     </services>
     <services name="A.methodA-internal-1#CPU#6">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#6"/>
     </services>
     <services name="A.methodA-internal-1#CPU#5">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#5"/>
     </services>
     <services name="A.methodA-internal-1#CPU#8">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#8"/>
     </services>
     <services name="A.methodA-internal-1#CPU#7">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-1#CPU#7"/>
     </services>
     <services name="A.methodA-internal-0#CPU#7">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#7"/>
     </services>
     <services name="A.methodA-internal-0#CPU#6">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#6"/>
     </services>
     <services name="A.methodA-internal-0#CPU#5">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#5"/>
     </services>
     <services name="A.methodA-internal-0#CPU#4">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#4"/>
     </services>
     <services name="A.methodA-internal-0#CPU#9">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#9"/>
     </services>
     <services name="A.methodA-internal-0#CPU#8">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#8"/>
     </services>
     <services name="A.methodA-internal-0#CPU#3">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#3"/>
     </services>
     <services name="A.methodA-internal-0#CPU#2">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#2"/>
     </services>
     <services name="A.methodA-internal-0#CPU#1">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#1"/>
     </services>
     <services name="A.methodA-internal-0#CPU#0">
-      <tasks xsi:type="librede:ResourceDemand" name="CPU"/>
+      <tasks xsi:type="librede:ResourceDemand" name="A.methodA-internal-0#CPU#0"/>
     </services>
   </workloadDescription>
   <input>

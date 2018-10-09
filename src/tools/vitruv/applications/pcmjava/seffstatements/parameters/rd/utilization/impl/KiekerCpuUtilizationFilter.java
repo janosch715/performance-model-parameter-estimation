@@ -1,4 +1,4 @@
-package tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl;
+package tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.impl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.system.CPUUtilizationRecord;
-import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.ResourceUtilizationDataSet;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.ResourceUtilizationDataSet;
 
 @Plugin(description = "A filter for cpu utilization records.")
 public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin implements ResourceUtilizationDataSet {
@@ -22,6 +22,11 @@ public final class KiekerCpuUtilizationFilter extends AbstractFilterPlugin imple
 	public KiekerCpuUtilizationFilter(Configuration configuration, IProjectContext projectContext) {
 		super(configuration, projectContext);
 		this.cpuUtilization = new HashMap<String, SortedMap<Long, Double>>();
+	}
+	
+	@Override
+	public double timeToSeconds(long time) {
+		return time / 1.0e9;
 	}
 	
 	@Override

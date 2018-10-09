@@ -10,8 +10,9 @@ import tools.vitruv.applications.pcmjava.seffstatements.parameters.branch.impl.K
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.loop.LoopDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.loop.impl.KiekerLoopFilter;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.ResponseTimeDataSet;
-import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.KiekerCpuUtilizationFilter;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.KiekerResponseTimeFilter;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.ResourceUtilizationDataSet;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.impl.KiekerCpuUtilizationFilter;
 
 public class KiekerMonitoringReader {
 
@@ -33,7 +34,7 @@ public class KiekerMonitoringReader {
 		return callRecordFilter;
 	}
 
-	public KiekerCpuUtilizationFilter getCpuRepository() {
+	public ResourceUtilizationDataSet getCpuRepository() {
 		return cpuFilter;
 	}
 

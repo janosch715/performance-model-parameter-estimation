@@ -16,5 +16,7 @@ public interface ResponseTimeDataSet {
 	Long getLatestEntry();
 
 	Long getEarliestEntry();
+	
+	double timeToSeconds(long time);
 
 }

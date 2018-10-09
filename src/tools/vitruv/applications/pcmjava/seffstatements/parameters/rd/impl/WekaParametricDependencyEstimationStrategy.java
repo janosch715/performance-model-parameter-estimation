@@ -14,7 +14,7 @@ import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
 
-public class WekaResourceDemandModelEstimation {
+public class WekaParametricDependencyEstimationStrategy implements ParametricDependencyEstimationStrategy {
 
 	private static class WekaResourceDemandModel implements ResourceDemandModel {
 
@@ -37,7 +37,17 @@ public class WekaResourceDemandModelEstimation {
 		}
 	}
 	
-	private ResourceDemandModel estimateResourceDemandModel(String internalActionId, String resourceId,
+	@Override
+	public ResourceDemandModel estimateResourceDemandModel(String internalActionId, String resourceId,
+			Map<ServiceParameters, Double> resourceDemands) {
+		try {
+			return this.internEstimateResourceDemandModel(internalActionId, resourceId, resourceDemands);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public ResourceDemandModel internEstimateResourceDemandModel(String internalActionId, String resourceId,
 			Map<ServiceParameters, Double> resourceDemands) throws Exception {
 		ServiceParameters prototypeParameters = resourceDemands.keySet().iterator().next();
 
@@ -56,9 +66,10 @@ public class WekaResourceDemandModelEstimation {
 
 		LinearRegression linReg = new LinearRegression();
 
-		// 10-fold cross-validation
 		Evaluation evaluation = new Evaluation(dataset);
-		evaluation.crossValidateModel(linReg, dataset, 10, new Random(1));
+		int folds = dataset.size() / 10;
+		folds = Math.max(folds, 2);
+		evaluation.crossValidateModel(linReg, dataset, folds, new Random(1));
 		System.out.println(evaluation.toSummaryString());
 
 		linReg.buildClassifier(dataset);
@@ -67,5 +78,4 @@ public class WekaResourceDemandModelEstimation {
 		return new WekaResourceDemandModel(linReg, parametersConversion);
 	}
 
-	
 }
