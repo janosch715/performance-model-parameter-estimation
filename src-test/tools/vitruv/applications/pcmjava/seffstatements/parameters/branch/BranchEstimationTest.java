@@ -23,6 +23,7 @@ import tools.vitruv.applications.pcmjava.seffstatements.parameters.LoggingUtil;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceParametersUtil;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.branch.impl.BranchEstimationImpl;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.KiekerMonitoringReader;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 
 public class BranchEstimationTest {
 
@@ -42,9 +43,9 @@ public class BranchEstimationTest {
 
 	@Test
 	public void estimateBranchExecutedTest() {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/withnames");
 
-		this.branchEstimation.updateModels(reader.getCallRecordRepository(), reader.getBranchRepository());
+		this.branchEstimation.updateModels(reader.getServiceCalls(), reader.getBranches());
 
 		Optional<AbstractBranchTransition> result = this.branchEstimation.estimateBranch(this.branchAction,
 				ServiceParametersUtil.buildServiceCall("a", 3));
@@ -55,9 +56,9 @@ public class BranchEstimationTest {
 
 	@Test
 	public void estimateNoBranchExecutedTest() {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/withnames");
 
-		this.branchEstimation.updateModels(reader.getCallRecordRepository(), reader.getBranchRepository());
+		this.branchEstimation.updateModels(reader.getServiceCalls(), reader.getBranches());
 
 		Optional<AbstractBranchTransition> result = this.branchEstimation.estimateBranch(this.branchAction,
 				ServiceParametersUtil.buildServiceCall("a", 6));

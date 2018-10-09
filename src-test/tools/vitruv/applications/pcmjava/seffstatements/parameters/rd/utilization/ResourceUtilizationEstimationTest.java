@@ -22,6 +22,7 @@ import org.palladiosimulator.pcm.seff.seff_performance.ParametricResourceDemand;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.LoggingUtil;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.PcmUtils;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.KiekerMonitoringReader;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.BranchEstimationMock;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.LoopEstimationMock;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.impl.ResourceUtilizationEstimationImpl;
@@ -44,34 +45,34 @@ public class ResourceUtilizationEstimationTest {
 	
 	@Test
 	public void estimationTest() {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/simple");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/simple");
 		Repository pcmModel = PcmUtils.loadModel("./test-data/simple/default.repository");
 
 		ResourceUtilizationEstimationImpl estimation = new ResourceUtilizationEstimationImpl(Collections.emptySet(),
-				pcmModel, reader.getCallRecordRepository(), new LoopEstimationMock(), new BranchEstimationMock(),
+				pcmModel, reader.getServiceCalls(), new LoopEstimationMock(), new BranchEstimationMock(),
 				new ResourceDemandEstimationMock());
 		
-		ResourceUtilizationDataSet results = estimation.estimateRemainingUtilization(reader.getCpuRepository());
+		ResourceUtilizationDataSet results = estimation.estimateRemainingUtilization(reader.getResourceUtilizations());
 
-		assertEquals(1.0, (double)reader.getCpuRepository().getUtilization("_oro4gG3fEdy4YaaT-RYrLQ").get(1538841944174331860L), 0.00001);
+		assertEquals(1.0, (double)reader.getResourceUtilizations().getUtilization("_oro4gG3fEdy4YaaT-RYrLQ").get(1538841944174331860L), 0.00001);
 		assertEquals(0.0, (double)results.getUtilization("_oro4gG3fEdy4YaaT-RYrLQ").get(1538841944174331860L), 0.00001);
 	}
 
 	@Test
 	public void checkIgnoreInternalActionsTest() {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/simple");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/simple");
 		Repository pcmModel = PcmUtils.loadModel("./test-data/simple/default.repository");
 
-		Set<String> allInternalActionIds = reader.getResponseTimeRepository().getInternalActionIds();
+		Set<String> allInternalActionIds = reader.getResponseTimes().getInternalActionIds();
 
 		ResourceUtilizationEstimationImpl estimation = new ResourceUtilizationEstimationImpl(allInternalActionIds,
-				pcmModel, reader.getCallRecordRepository(), new LoopEstimationMock(), new BranchEstimationMock(),
+				pcmModel, reader.getServiceCalls(), new LoopEstimationMock(), new BranchEstimationMock(),
 				new ResourceDemandEstimationMock());
 
-		ResourceUtilizationDataSet results = estimation.estimateRemainingUtilization(reader.getCpuRepository());
+		ResourceUtilizationDataSet results = estimation.estimateRemainingUtilization(reader.getResourceUtilizations());
 
-		for (String resourceId : reader.getCpuRepository().getResourceIds()) {
-			assertEquals(reader.getCpuRepository().getUtilization(resourceId), results.getUtilization(resourceId));
+		for (String resourceId : reader.getResourceUtilizations().getResourceIds()) {
+			assertEquals(reader.getResourceUtilizations().getUtilization(resourceId), results.getUtilization(resourceId));
 		}
 	}
 }

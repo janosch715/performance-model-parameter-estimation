@@ -19,6 +19,7 @@ import tools.vitruv.applications.pcmjava.seffstatements.parameters.LoggingUtil;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceParameters;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceParametersUtil;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.KiekerMonitoringReader;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.LibredeResourceDemandEstimation;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.ResourceDemandModel;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.WekaParametricDependencyEstimationStrategy;
@@ -39,10 +40,10 @@ public class LibredeResourceDemandEstimationTest {
 
 	@Test
 	public void estimateResourceDemandsTest() {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/simple");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/simple");
 
 		LibredeResourceDemandEstimation estimation = new LibredeResourceDemandEstimation(this.modelEstimationStartegy,
-				reader.getCpuRepository(), reader.getResponseTimeRepository(), reader.getCallRecordRepository());
+				reader.getResourceUtilizations(), reader.getResponseTimes(), reader.getServiceCalls());
 
 		Map<String, Map<String, Map<ServiceParameters, Double>>> results = estimation.estimateResourceDemands();
 
@@ -63,10 +64,10 @@ public class LibredeResourceDemandEstimationTest {
 
 	@Test
 	public void estimateResourceDemandModelsTest() {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/simple");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/simple");
 
 		LibredeResourceDemandEstimation estimation = new LibredeResourceDemandEstimation(this.modelEstimationStartegy,
-				reader.getCpuRepository(), reader.getResponseTimeRepository(), reader.getCallRecordRepository());
+				reader.getResourceUtilizations(), reader.getResponseTimes(), reader.getServiceCalls());
 
 		Map<String, Map<String, ResourceDemandModel>> results = estimation.estimateResourceDemandModels();
 
@@ -85,10 +86,10 @@ public class LibredeResourceDemandEstimationTest {
 
 	@Test
 	public void buildConfigTest() throws Exception {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/withnames");
 
 		LibredeResourceDemandEstimation estimation = new LibredeResourceDemandEstimation(this.modelEstimationStartegy,
-				reader.getCpuRepository(), reader.getResponseTimeRepository(), reader.getCallRecordRepository());
+				reader.getResourceUtilizations(), reader.getResponseTimes(), reader.getServiceCalls());
 
 		Files.deleteIfExists(Paths.get("./test-data/withnames/temp.librede"));
 		estimation.saveConfig("./test-data/withnames/temp.librede");

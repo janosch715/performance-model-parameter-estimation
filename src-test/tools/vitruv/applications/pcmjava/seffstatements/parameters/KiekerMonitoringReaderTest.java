@@ -13,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.KiekerMonitoringReader;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 
 public class KiekerMonitoringReaderTest {
 	
@@ -27,10 +28,10 @@ public class KiekerMonitoringReaderTest {
 	
 	@Test
 	public void kiekerReadTest() {
-		KiekerMonitoringReader reader = new KiekerMonitoringReader("./test-data/withnames");
+		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/withnames");
 		
 		// Check service ids
-		Set<String> serviceIds = reader.getCallRecordRepository().getServiceIds();
+		Set<String> serviceIds = reader.getServiceCalls().getServiceIds();
 		
 		Set<String> expectedServiceIds = new HashSet<String>();
 		expectedServiceIds.add("A.methodA");
@@ -39,7 +40,7 @@ public class KiekerMonitoringReaderTest {
 		assertEquals(expectedServiceIds, serviceIds);
 		
 		// Check caller ids
-		Set<String> callerIds = reader.getCallRecordRepository().getCallerIds();
+		Set<String> callerIds = reader.getServiceCalls().getCallerIds();
 		
 		Set<String> expectedCallerIds = new HashSet<String>();
 		expectedCallerIds.add("externalB.methodB1");
@@ -48,7 +49,7 @@ public class KiekerMonitoringReaderTest {
 		assertEquals(expectedCallerIds, callerIds);
 		
 		// Check loop ids
-		Set<String> loopIds = reader.getLoopRepository().getLoopIds();
+		Set<String> loopIds = reader.getLoops().getLoopIds();
 		
 		Set<String> expectedLoopIds = new HashSet<String>();
 		expectedLoopIds.add("A.methodA-loop-0");
@@ -56,7 +57,7 @@ public class KiekerMonitoringReaderTest {
 		assertEquals(expectedLoopIds, loopIds);
 		
 		// Check branch ids
-		Set<String> branchIds = reader.getBranchRepository().getBranchIds();
+		Set<String> branchIds = reader.getBranches().getBranchIds();
 		
 		Set<String> expectedBranchIds = new HashSet<String>();
 		expectedBranchIds.add("A.methodA-branch-0");
@@ -64,7 +65,7 @@ public class KiekerMonitoringReaderTest {
 		assertEquals(expectedBranchIds, branchIds);
 		
 		// Check resource demand ids
-		Set<String> resourceDemandIds = reader.getResponseTimeRepository().getInternalActionIds();
+		Set<String> resourceDemandIds = reader.getResponseTimes().getInternalActionIds();
 		
 		Set<String> expectedResourceDemandIds = new HashSet<String>();
 		expectedResourceDemandIds.add("A.methodA-internal-0");

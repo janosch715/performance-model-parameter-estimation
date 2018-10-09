@@ -3,6 +3,8 @@ package tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.log4j.Logger;
 import org.palladiosimulator.pcm.repository.Repository;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceCall;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceCallDataSet;
@@ -16,22 +18,32 @@ import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilizatio
 
 public class ResourceDemandEstimationImpl implements ResourceDemandEstimation {
 
+	private static final Logger LOGGER = Logger.getLogger(ResourceDemandEstimationImpl.class);
 	private final Map<String, Map<String, ResourceDemandModel>> modelCache;
 	private final ParametricDependencyEstimationStrategy parametricDependencyEstimationStrategy;
+	private final LoopEstimation loopEstimation;
+	private final BranchEstimation branchEstimation;
 
-	public ResourceDemandEstimationImpl() {
+	public ResourceDemandEstimationImpl(LoopEstimation loopEstimation, BranchEstimation branchEstimation) {
 		this.modelCache = new HashMap<String, Map<String, ResourceDemandModel>>();
 		this.parametricDependencyEstimationStrategy = new WekaParametricDependencyEstimationStrategy();
+		this.loopEstimation = loopEstimation;
+		this.branchEstimation = branchEstimation;
 	}
 
-	public void updateModels(Repository pcmRepository, ResourceUtilizationDataSet resourceUtilizations,
-			ResponseTimeDataSet responseTimes, ServiceCallDataSet serviceCalls, LoopEstimation loopEstimation,
-			BranchEstimation branchEstimation) {
+	public void updateModels(Repository pcmRepository, ServiceCallDataSet serviceCalls,
+			ResourceUtilizationDataSet resourceUtilizations, ResponseTimeDataSet responseTimes) {
 
 		Set<String> internalActionsToEstimate = responseTimes.getInternalActionIds();
+		
+		if (internalActionsToEstimate.isEmpty()) {
+			LOGGER.info("No internal action records in data set. So resource demand estimation is skipped.");
+			return;
+		}
 
 		ResourceUtilizationEstimation resourceUtilizationEstimation = new ResourceUtilizationEstimationImpl(
-				internalActionsToEstimate, pcmRepository, serviceCalls, loopEstimation, branchEstimation, this);
+				internalActionsToEstimate, pcmRepository, serviceCalls, this.loopEstimation, this.branchEstimation,
+				this);
 
 		ResourceUtilizationDataSet remainingResourceUtilization = resourceUtilizationEstimation
 				.estimateRemainingUtilization(resourceUtilizations);

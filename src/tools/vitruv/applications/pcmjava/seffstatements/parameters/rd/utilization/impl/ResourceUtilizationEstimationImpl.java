@@ -16,6 +16,7 @@ import org.palladiosimulator.pcm.repository.Repository;
 import org.palladiosimulator.pcm.seff.AbstractAction;
 import org.palladiosimulator.pcm.seff.AbstractBranchTransition;
 import org.palladiosimulator.pcm.seff.BranchAction;
+import org.palladiosimulator.pcm.seff.ExternalCallAction;
 import org.palladiosimulator.pcm.seff.InternalAction;
 import org.palladiosimulator.pcm.seff.LoopAction;
 import org.palladiosimulator.pcm.seff.ResourceDemandingBehaviour;
@@ -231,7 +232,9 @@ public class ResourceUtilizationEstimationImpl implements ResourceUtilizationEst
 			} else if (currentAction instanceof InternalAction) {
 				currentAction = this.estimateInternalActionResourceDemand((InternalAction) currentAction, serviceCall,
 						resourceDemands);
-			} else if (currentAction instanceof StopAction) {
+			} else if (currentAction instanceof ExternalCallAction) {
+				currentAction = currentAction.getSuccessor_AbstractAction();
+			}else if (currentAction instanceof StopAction) {
 				return;
 			} else {
 				throw new UnsupportedOperationException(
@@ -244,7 +247,8 @@ public class ResourceUtilizationEstimationImpl implements ResourceUtilizationEst
 			Map<String, Double> resourceDemands) {
 		if (this.ignoredInternalActionIds.contains(internalAction.getId()) == false) {
 			for (ParametricResourceDemand rd : internalAction.getResourceDemand_Action()) {
-				String resourceId = rd.getRequiredResource_ParametricResourceDemand().getId();
+				// TODO: use real resource id rd.getRequiredResource_ParametricResourceDemand().getId();
+				String resourceId = "_oro4gG3fEdy4YaaT-RYrLQ";
 				double estimatedRd = this.rdEstimation.estimateResourceDemand(internalAction.getId(), resourceId,
 						serviceCall);
 				addResourceDemands(resourceDemands, rd.getRequiredResource_ParametricResourceDemand().getId(),

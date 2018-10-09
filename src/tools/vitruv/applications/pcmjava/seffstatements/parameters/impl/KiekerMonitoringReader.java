@@ -4,6 +4,7 @@ import kieker.analysis.AnalysisController;
 import kieker.analysis.IAnalysisController;
 import kieker.analysis.plugin.reader.filesystem.FSReader;
 import kieker.common.configuration.Configuration;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceCallDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.branch.BranchDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.branch.impl.KiekerBranchFilter;
@@ -14,7 +15,7 @@ import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.Kieke
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.ResourceUtilizationDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.impl.KiekerCpuUtilizationFilter;
 
-public class KiekerMonitoringReader {
+public class KiekerMonitoringReader implements MonitoringDataSet {
 
 	private KiekerResponseTimeFilter responseTimeFilter;
 	private KiekerServiceCallRecordFilter callRecordFilter;
@@ -26,23 +27,43 @@ public class KiekerMonitoringReader {
 		this.read(kiekerRecordsDirectoryPath);
 	}
 
-	public ResponseTimeDataSet getResponseTimeRepository() {
+	/* (non-Javadoc)
+	 * @see tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.MonitoringDataSet#getResponseTimes()
+	 */
+	@Override
+	public ResponseTimeDataSet getResponseTimes() {
 		return responseTimeFilter;
 	}
 
-	public ServiceCallDataSet getCallRecordRepository() {
+	/* (non-Javadoc)
+	 * @see tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.MonitoringDataSet#getServiceCalls()
+	 */
+	@Override
+	public ServiceCallDataSet getServiceCalls() {
 		return callRecordFilter;
 	}
 
-	public ResourceUtilizationDataSet getCpuRepository() {
+	/* (non-Javadoc)
+	 * @see tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.MonitoringDataSet#getResourceUtilizations()
+	 */
+	@Override
+	public ResourceUtilizationDataSet getResourceUtilizations() {
 		return cpuFilter;
 	}
 
-	public LoopDataSet getLoopRepository() {
+	/* (non-Javadoc)
+	 * @see tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.MonitoringDataSet#getLoops()
+	 */
+	@Override
+	public LoopDataSet getLoops() {
 		return loopFilter;
 	}
 
-	public BranchDataSet getBranchRepository() {
+	/* (non-Javadoc)
+	 * @see tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.MonitoringDataSet#getBranches()
+	 */
+	@Override
+	public BranchDataSet getBranches() {
 		return branchFilter;
 	}
 

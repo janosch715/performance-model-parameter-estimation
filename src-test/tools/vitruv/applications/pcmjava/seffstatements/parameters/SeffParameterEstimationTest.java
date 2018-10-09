@@ -1,4 +1,4 @@
-package tools.vitruv.applications.pcmjava.seffstatements.parameters.rd;
+package tools.vitruv.applications.pcmjava.seffstatements.parameters;
 
 import static org.junit.Assert.assertEquals;
 import org.junit.BeforeClass;
@@ -12,7 +12,7 @@ import tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.KiekerMo
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.ResourceDemandEstimationImpl;
 
-public class ResourceDemandEstimationTest {
+public class SeffParameterEstimationTest {
 
 	@BeforeClass
 	public static void setUp() {
@@ -20,22 +20,16 @@ public class ResourceDemandEstimationTest {
 	}
 
 	@Test
-	public void estimateAllTest() {
+	public void estimateIterationTest() {
 		MonitoringDataSet reader = new KiekerMonitoringReader("./test-data/simple");
 		Repository pcmModel = PcmUtils.loadModel("./test-data/simple/default.repository");
 
-		ResourceDemandEstimationImpl rdEstimation = new ResourceDemandEstimationImpl(new LoopEstimationMock(),
-				new BranchEstimationMock());
-		rdEstimation.updateModels(pcmModel, reader.getServiceCalls(), reader.getResourceUtilizations(),
-				reader.getResponseTimes());
+		MonitoringDataSet reader2 = new KiekerMonitoringReader("./test-data/simple-iteration");
+		Repository pcmModel2 = PcmUtils.loadModel("./test-data/simple-iteration/default2.repository");
 
-		double result1 = rdEstimation.estimateResourceDemand("_OkrUMMjSEeiWRYm1yDC5rQ", "_oro4gG3fEdy4YaaT-RYrLQ",
-				ServiceParametersUtil.buildServiceCall("a", 1));
-		assertEquals(0.00001, result1, 0.0001);
-
-		double result2 = rdEstimation.estimateResourceDemand("_OkrUMMjSEeiWRYm1yDC5rQ", "_oro4gG3fEdy4YaaT-RYrLQ",
-				ServiceParametersUtil.buildServiceCall("a", 8));
-		assertEquals(0.00081, result2, 0.0001);
+		SeffParameterEstimation estimation = new SeffParameterEstimation();
+		estimation.updateModels(pcmModel, reader);
+		estimation.updateModels(pcmModel2, reader2);
+		
 	}
-
 }
