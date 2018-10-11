@@ -6,4 +6,5 @@ public interface ResourceDemandModel {
 
 	double estimate(ServiceCall serviceCall);
 
+	String getResourceDemandStochasticExpression();
 }

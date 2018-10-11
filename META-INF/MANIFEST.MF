@@ -8,7 +8,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.junit4;bundle-version="4.8.1",
  org.apache.log4j;bundle-version="1.2.15",
  org.eclipse.emf.ecore.xmi;bundle-version="2.13.0",
- org.palladiosimulator.pcm;bundle-version="7.0.0"
+ org.palladiosimulator.pcm;bundle-version="7.0.0",
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common
 Bundle-ClassPath: target/classes/,
  target/dependency/arpack_combined_all.jar,
  target/dependency/bounce.jar,

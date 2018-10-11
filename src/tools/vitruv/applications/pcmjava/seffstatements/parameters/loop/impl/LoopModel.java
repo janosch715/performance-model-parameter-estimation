@@ -6,4 +6,6 @@ public interface LoopModel {
 
 	double estimateIterations(ServiceCall serviceCall);
 
+	String getIterationsStochasticExpression();
+
 }

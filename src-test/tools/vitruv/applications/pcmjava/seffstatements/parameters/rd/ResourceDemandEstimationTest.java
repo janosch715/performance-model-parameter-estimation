@@ -6,11 +6,11 @@ import org.junit.Test;
 import org.palladiosimulator.pcm.repository.Repository;
 
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.LoggingUtil;
-import tools.vitruv.applications.pcmjava.seffstatements.parameters.PcmUtils;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceParametersUtil;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.KiekerMonitoringReader;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl.ResourceDemandEstimationImpl;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.util.PcmUtils;
 
 public class ResourceDemandEstimationTest {
 

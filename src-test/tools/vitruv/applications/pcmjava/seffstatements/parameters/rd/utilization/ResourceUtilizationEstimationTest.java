@@ -20,12 +20,12 @@ import org.palladiosimulator.pcm.seff.ResourceDemandingSEFF;
 import org.palladiosimulator.pcm.seff.seff_performance.ParametricResourceDemand;
 
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.LoggingUtil;
-import tools.vitruv.applications.pcmjava.seffstatements.parameters.PcmUtils;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.impl.KiekerMonitoringReader;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.MonitoringDataSet;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.BranchEstimationMock;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.LoopEstimationMock;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.utilization.impl.ResourceUtilizationEstimationImpl;
+import tools.vitruv.applications.pcmjava.seffstatements.parameters.util.PcmUtils;
 
 public class ResourceUtilizationEstimationTest {
 

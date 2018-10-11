@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.StringJoiner;
+
+import org.palladiosimulator.pcm.core.CoreFactory;
+import org.palladiosimulator.pcm.core.PCMRandomVariable;
 
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceCall;
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceCallDataSet;
@@ -47,7 +51,7 @@ public class WekaLoopModelEstimation {
 		}
 	}
 	
-	private WekaLoopModel internEstimate(String loopId) throws Exception {
+	private LoopModel internEstimate(String loopId) throws Exception {
 		List<LoopRecord> records = this.loopIterationRepository.getLoopRecords(loopId);
 
 		if (records.size() == 0) {
@@ -87,10 +91,10 @@ public class WekaLoopModelEstimation {
 	
 	private static class WekaLoopModel implements LoopModel {
 		
-		private final Classifier classifier;
+		private final LinearRegression classifier;
 		private final WekaServiceParametersModel parametersConversion;
 
-		public WekaLoopModel(Classifier classifier, WekaServiceParametersModel parametersConversion) {
+		public WekaLoopModel(LinearRegression classifier, WekaServiceParametersModel parametersConversion) {
 			this.classifier = classifier;
 			this.parametersConversion = parametersConversion;
 		}
@@ -103,6 +107,27 @@ public class WekaLoopModelEstimation {
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
+		}
+		
+		@Override
+		public String getIterationsStochasticExpression() {
+			StringJoiner result = new StringJoiner(" + ");
+			double[] coefficients = classifier.coefficients();
+			for (int i = 0; i < coefficients.length - 2; i++) {
+				if (coefficients[i] == 0.0) {
+					continue;
+				}
+				StringBuilder coefficientPart = new StringBuilder();
+				String paramStoEx = parametersConversion.getStochasticExpressionForIndex(i);
+				coefficientPart.append(round(coefficients[i])).append(" * ").append(paramStoEx);
+				result.add(coefficientPart.toString());
+			}
+			result.add(String.valueOf(round(coefficients[coefficients.length - 1])));
+			return result.toString();
+		}
+		
+		private static double round(double value) {
+			return Math.round(value * 1000.0) / 1000.0;
 		}
 	}
 }

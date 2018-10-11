@@ -26,4 +26,9 @@ public class SeffParameterEstimation {
 		this.resourceDemandEstimation.updateModels(pcmModel, monitoringDataSet.getServiceCalls(),
 				monitoringDataSet.getResourceUtilizations(), monitoringDataSet.getResponseTimes());
 	}
+	
+	public void applyEstimations(Repository pcmModel) {
+		this.loopEstimation.applyEstimations(pcmModel);
+		this.resourceDemandEstimation.applyEstimations(pcmModel);
+	}
 }

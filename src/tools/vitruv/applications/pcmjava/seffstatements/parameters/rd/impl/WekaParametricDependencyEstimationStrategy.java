@@ -2,6 +2,7 @@ package tools.vitruv.applications.pcmjava.seffstatements.parameters.rd.impl;
 
 import java.util.Map;
 import java.util.Random;
+import java.util.StringJoiner;
 import java.util.Map.Entry;
 
 import tools.vitruv.applications.pcmjava.seffstatements.parameters.ServiceCall;
@@ -18,10 +19,10 @@ public class WekaParametricDependencyEstimationStrategy implements ParametricDep
 
 	private static class WekaResourceDemandModel implements ResourceDemandModel {
 
-		private final Classifier classifier;
+		private final LinearRegression classifier;
 		private final WekaServiceParametersModel parametersConversion;
 
-		public WekaResourceDemandModel(Classifier classifier, WekaServiceParametersModel parametersConversion) {
+		public WekaResourceDemandModel(LinearRegression classifier, WekaServiceParametersModel parametersConversion) {
 			this.classifier = classifier;
 			this.parametersConversion = parametersConversion;
 		}
@@ -34,6 +35,27 @@ public class WekaParametricDependencyEstimationStrategy implements ParametricDep
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
+		}
+
+		@Override
+		public String getResourceDemandStochasticExpression() {
+			StringJoiner result = new StringJoiner(" + ");
+			double[] coefficients = classifier.coefficients();
+			for (int i = 0; i < coefficients.length - 2; i++) {
+				if (coefficients[i] == 0.0) {
+					continue;
+				}
+				StringBuilder coefficientPart = new StringBuilder();
+				String paramStoEx = parametersConversion.getStochasticExpressionForIndex(i);
+				coefficientPart.append(round(coefficients[i])).append(" * ").append(paramStoEx);
+				result.add(coefficientPart.toString());
+			}
+			result.add(String.valueOf(round(coefficients[coefficients.length - 1])));
+			return result.toString();
+		}
+		
+		private static double round(double value) {
+			return Math.round(value * 1000.0) / 1000.0;
 		}
 	}
 	
